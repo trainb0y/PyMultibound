@@ -62,14 +62,13 @@ def new_profile():
     name = input("Enter profile name: ")
     profile = Profile()
     profile.create(name, steamapps_dir)
+    profiles.append(profile)
     
 def update_profile():
     """Update the currently loaded profile to be whatever is in the starbound dir"""
     profile = select_profile(profiles)
     profile.update()
    
-    
-
 def edit_profile(): 
     """Edit profile menu (for changing name, etc)"""
     pass
@@ -81,7 +80,9 @@ def delete_profile():
     profile = select_profile(profiles)
     if "y" in input(f"{Fore.GREEN}Delete profile {profile.name}? {Fore.YELLOW}This IS NOT REVERSABLE! (Y/N) ").lower():
         profile.delete(steamapps_dir)
+        profiles.remove(profile)
     else: print(f"\n{Fore.YELLOW}Profile deletion aborted")
+
 
 
 def help_page():
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     main_menu = menu.Menu(
         "Main Menu - Please Select an Option", [
         ("Help",help_page),
-        ("Run",run_starbound)
+        ("Run",run_starbound),
         ("Load Profile", load_profile),
         ("Update Profile", update_profile),
         ("New Profile", new_profile),
