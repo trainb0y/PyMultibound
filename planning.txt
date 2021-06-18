@@ -1,0 +1,34 @@
+So
+
+First Menu:
+
+"Cheesy ASCII ART"
+##############################
+Choose an option
+1) Load Profile
+2) New Profile from Current Setup
+3) Edit Profile
+4) Delete Profile
+##############################
+
+Load Profile Window
+##############################
+Select a Profile to Load
+1) Some Profile Name
+2) Some Other Profile Name
+##############################
+
+Delete Profile Window
+##############################
+Select a Profile to Delete
+1) Some Profile Name
+2) Some Other Profile Name
+
+(Confirm Y/N Afterward)
+##############################
+
+New Profile Window
+##############################
+Enter Profile Name: 
+Save Y/N:
+##############################
