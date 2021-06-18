@@ -19,6 +19,7 @@ init(autoreset=True) # Should make this work for more windows use cases
 
 steamapps_dir = os.path.join(os.path.expanduser("~"),"/Program Files (x86)/Steam/steamapps")
 profiles = [Profile(),Profile()]
+current_profile = profiles[0] # temporary
 profiles[0].name = "test1"
 profiles[1].name = "test2"
 
@@ -47,6 +48,7 @@ def select_profile(profiles):
 
 
 def load_profile():
+    """Switch the currently loaded profile for a different one"""
     # Have the user select a profile and then load it in
     profile = select_profile(profiles)
     if "y" in input(f"{Fore.GREEN}Load profile {profile.name}? {Fore.YELLOW}This will erase the current game data!\n"+
@@ -56,20 +58,25 @@ def load_profile():
     
 
 def new_profile():
+    """Create a new profile"""
     name = input("Enter profile name: ")
     profile = Profile()
     profile.create(name, steamapps_dir)
     
 def update_profile():
+    """Update the currently loaded profile to be whatever is in the starbound dir"""
     profile = select_profile(profiles)
     profile.update()
    
     
 
-def edit_profile(): pass
+def edit_profile(): 
+    """Edit profile menu (for changing name, etc)"""
+    pass
 
 
 def delete_profile():
+    """Deletes a profile"""
     # Have the user select a profile and then "delyeet" it
     profile = select_profile(profiles)
     if "y" in input(f"{Fore.GREEN}Delete profile {profile.name}? {Fore.YELLOW}This IS NOT REVERSABLE! (Y/N) ").lower():
@@ -78,11 +85,16 @@ def delete_profile():
 
 
 def help_page():
+    """Show a basic description of the options"""
     print(
 """
 Yeah... help text comes later
 """
     )
+
+def run_starbound():
+    """Run starbound as it is now, and update the current profile on exit"""
+    pass 
 
 
 if __name__ == "__main__":
@@ -93,6 +105,7 @@ if __name__ == "__main__":
     main_menu = menu.Menu(
         "Main Menu - Please Select an Option", [
         ("Help",help_page),
+        ("Run",run_starbound)
         ("Load Profile", load_profile),
         ("Update Profile", update_profile),
         ("New Profile", new_profile),
