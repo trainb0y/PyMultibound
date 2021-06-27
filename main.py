@@ -48,12 +48,14 @@ def select_profile(profiles):
 
 
 def load_profile():
+    global current_profile
     """Switch the currently loaded profile for a different one"""
     # Have the user select a profile and then load it in
     profile = select_profile(profiles)
     if "y" in input(f"{Fore.GREEN}Load profile {profile.name}? {Fore.YELLOW}This will erase the current game data!\n"+
         "(Save it as a profile/update the profile first) (Y/N) ").lower():
-        profile.load(steamapps_dir)
+        profile.load()
+        current_profile = profile
     else: print(f"\n{Fore.YELLOW}Profile load aborted")
     
 
@@ -64,11 +66,6 @@ def new_profile():
     profile.create(name, steamapps_dir)
     profiles.append(profile)
     
-def update_profile():
-    """Update the currently loaded profile to be whatever is in the starbound dir"""
-    profile = select_profile(profiles)
-    profile.update()
-   
 def edit_profile(): 
     """Edit profile menu (for changing name, etc)"""
     pass
@@ -95,26 +92,36 @@ Yeah... help text comes later
 
 def run_starbound():
     """Run starbound as it is now, and update the current profile on exit"""
-    pass 
+    global current_profile
+    # OS.path.join does not escape spaces, so
+    # it things you are trying to run
+    # C:/Program beacause of the space in program files
+    # So, have to do some string work lol
+    cmd = os.path.join(steamapps_dir,"common/Starbound/win64/starbound.exe")
+    os.system(f'"{cmd}"')  # Run the game
+    current_profile.update()
 
 
 if __name__ == "__main__":
 
     print(f"{Fore.CYAN}PyMultibound - v0.1")
     print(f"{Fore.GREEN}By trainb0y1")
-
-    main_menu = menu.Menu(
+    while True: # Main Menu Loop
+        main_menu = menu.Menu(
         "Main Menu - Please Select an Option", [
         ("Help",help_page),
-        ("Run",run_starbound),
+        (f"Run Starbound ({current_profile.name})",run_starbound),
         ("Load Profile", load_profile),
-        ("Update Profile", update_profile),
+        (f"Update Profile ({current_profile.name})", current_profile.update),
         ("New Profile", new_profile),
         ("Edit Profile", edit_profile),
         ("Delete Profile", delete_profile)])
+        # I put the menu definition in here so that the profile names can update
+        # With this outside, even when you switch profiles it will say you are on 
+        # the first one
+        print()
+        print(main_menu.display()) 
 
-    print(main_menu.display())
-    while True: # Main Menu Loop
         try:
             option = int(input('>> '))
             result = main_menu.callback(option)
@@ -122,6 +129,3 @@ if __name__ == "__main__":
             else: print(f"{Fore.RED}Please enter a number corresponding to an option!")
         except ValueError:
             print(f"{Fore.RED}Please enter a number!")
-
-        print()
-        print(main_menu.display())
