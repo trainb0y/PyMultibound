@@ -1,5 +1,5 @@
 
-import os
+import os, sys
 import menu
 from profile import Profile
 from colorama import Style, Fore, Back, init
@@ -18,6 +18,7 @@ init(autoreset=True) # Should make this work for more windows use cases
                      # also will remove the need to reset color after each line.
 
 steamapps_dir = os.path.join("c:\\","Program Files (x86)","Steam","steamapps") # see docs on os.path.join 
+workshop_dir = os.path.join(steamapps_dir, "workshop","content","211820")
 starbound_dir = os.path.join(steamapps_dir,"common","Starbound")
 print(starbound_dir)
 
@@ -27,7 +28,7 @@ profiles = []
 profiles_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),"profiles")
 for name in next(os.walk(profiles_dir))[1]:
     prof = Profile()
-    prof.create(name,starbound_dir)
+    prof.create(name,starbound_dir,workshop_dir)
     profiles.append(prof)
 
 # If we don't have a vanilla profile, make one
@@ -38,7 +39,7 @@ for prof in profiles:
 
 if not vanilla_exists:
     vanilla = Profile()
-    vanilla.create("Vanilla",starbound_dir)
+    vanilla.create("Vanilla",starbound_dir,workshop_dir)
 
 current_profile = profiles[0]
 
@@ -90,7 +91,7 @@ def new_profile():
     """Create a new profile"""
     name = input("Enter profile name: ")
     profile = Profile()
-    profile.create(name, starbound_dir)
+    profile.create(name, starbound_dir, workshop_dir)
     profiles.append(profile)
     
 def edit_profile(): 
@@ -142,7 +143,8 @@ if __name__ == "__main__":
         (f"Update Profile ({current_profile.name})", current_profile.update),
         ("New Profile", new_profile),
         ("Edit Profile", edit_profile),
-        ("Delete Profile", delete_profile)])
+        ("Delete Profile", delete_profile),
+        ("Quit", sys.exit)])
         # I put the menu definition in here so that the profile names can update
         # With this outside, even when you switch profiles it will say you are on 
         # the first one
