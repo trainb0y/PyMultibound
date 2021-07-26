@@ -1,5 +1,5 @@
 
-import os, sys
+import os, sys, json
 import menu
 from profile import Profile
 from colorama import Style, Fore, Back, init
@@ -16,6 +16,12 @@ from colorama import Style, Fore, Back, init
 
 init(autoreset=True) # Should make this work for more windows use cases
                      # also will remove the need to reset color after each line.
+
+
+# If the settings.json file does not exist, create it
+if not os.path.isfile(os.path.join(os.path.dirname(os.path.realpath(__file__)),"settings.json")):
+    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),"settings.json"),"x") as f:
+        json.dump({"backup-warning":True},f)
 
 steamapps_dir = os.path.join("c:\\","Program Files (x86)","Steam","steamapps") # see docs on os.path.join 
 workshop_dir = os.path.join(steamapps_dir, "workshop","content","211820")
@@ -112,7 +118,46 @@ def delete_profile():
 
 def help_page():
     """Show a basic description of the options"""
-    print(f"{Fore.MAGENTA}Yeah... help text comes later")
+    print(f"""{Fore.CYAN}
+-------------------- PyMultibound Help --------------------
+{Style.RESET_ALL}
+Most of the options should be self-explanatory, but some aspects
+of this mod manager need a bit of explanation.
+
+This program works by taking snapshots, called "profiles" of the
+important parts of the main starbound directory.
+
+When you want to play a profile, it deletes the contents of the "mods"
+and "storage" folders inside of the Starbound folder and replaces them 
+with the contents of the selected profile.
+
+{Fore.CYAN}
+---- PyMultibound Menu Options ---- 
+{Fore.GREEN}Help{Style.RESET_ALL}:           Brings up this message (clearly you know this by now)
+{Fore.GREEN}Run Starbound{Style.RESET_ALL}:  This will run Starbound, with the currently installed profile
+        This works by deleting the current Starbound "mods" and "storage" folders,
+        and replacing them with the saved ones for this profile.
+        
+        The current profile will be auto-updated when you quit starbound.
+{Fore.GREEN}Update Profile{Style.RESET_ALL}: This sets the profile's data to whatever is currently in the Starbound folder
+        {Fore.YELLOW}WARNING: if used while Starbound folder is empty, this can
+        effectively delete the current profile!
+{Fore.GREEN}Switch Profile{Style.RESET_ALL}: Change the currently selected profile
+{Fore.GREEN}New Profile{Style.RESET_ALL}:    Creates a new profile, but does not define any mods/universe
+        Use "Update Profile" with the new profile selected to define mods
+{Fore.GREEN}Edit Profile{Style.RESET_ALL}:   {Fore.RED}{Back.YELLOW}WIP{Style.RESET_ALL} This will eventually let you edit profile details.
+        For now, profiles must be edited manually. 
+            - You can change the profile name by changing the name of its folder
+                inside of the "profiles" folder
+            - You can add or remove mods directly from the "mods" folder inside of
+                the profile's folder
+            - You can access the universe/save stuff in the "storage" folder inside
+                of the profile's folder
+{Fore.GREEN}Delete Profile{Style.RESET_ALL}:  This will completely delete all of the selected profile's data.
+{Fore.GREEN}Quit{Style.RESET_ALL}: Quit the program
+    
+
+    """)
 
 def run_starbound():
     """Run starbound as it is now, and update the current profile on exit"""
@@ -134,6 +179,12 @@ if __name__ == "__main__":
 
     print(f"{Fore.CYAN}PyMultibound - v0.1")
     print(f"{Fore.GREEN}By trainb0y1")
+    print()
+    
+    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),"settings.json")) as f:
+        if json.load(f)["backup-warning"]:
+            print(f"{Fore.RED}{Back.YELLOW}{Style.BRIGHT}BE SURE TO MAKE A BACKUP BEFORE USING, THIS WILL DELETE THE STARBOUND DATA (See help for more info){Style.RESET_ALL}")
+            print(f"{Fore.RED} To disable this message, set backup-warning to false in settings.json")
     while True: # Main Menu Loop
         main_menu = menu.Menu(
         "Main Menu - Please Select an Option", [

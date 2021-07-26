@@ -1,5 +1,20 @@
 import os, shutil
 
+from colorama import Style, Fore, Back, init
+        # Allows us to use colored text
+        # How to use:
+        #    print(f"{Fore.RED}RED TEXT{Style.RESET_ALL}")
+        #    would print RED TEXT in the color red. f-strings make this
+        #    so much easier!
+
+        # Options:
+        # Fore: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
+        # Back: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
+        # Style: DIM, NORMAL, BRIGHT, RESET_ALL
+
+init(autoreset=True) # Should make this work for more windows use cases
+                     # also will remove the need to reset color after each line.
+
 class Profile():
 
     def create(self,name, starbound_dir, workshop_dir):
@@ -49,14 +64,14 @@ class Profile():
         try: # Mods
             shutil.move(os.path.join(self.starbound_dir,"mods"),os.path.join(self.directory,"mods"))
         except FileNotFoundError: 
-            print("Failed to update mods: Mods folder not found in starbound folder.")
+            print(f"{Fore.RED}Failed to update mods: Mods folder not found in starbound folder.")
             if not os.path.exists(os.path.join(self.directory,"mods")):
                 os.makedirs(os.path.join(self.directory,"mods"))
 
         try: # Storage
             shutil.move(os.path.join(self.starbound_dir,"storage"),os.path.join(self.directory,"storage"))
         except FileNotFoundError: 
-            print("Failed to update storage: Storage folder not found in starbound folder.")
+            print(f"{Fore.RED}Failed to update storage: Storage folder not found in starbound folder.")
             if not os.path.exists(os.path.join(self.directory,"storage")):
                 os.makedirs(os.path.join(self.directory,"storage"))
 
@@ -68,14 +83,14 @@ class Profile():
         # to workshop-mod-(numerical id)
 
         if len(next(os.walk(self.workshop_dir))[1]) > 0:
-            if "y" not in input("Steam Workshop mods detected, would you like to add them to the profile? (Y/N) "):
-                print("Steam workshop mods ignored")
+            if "y" not in input(f"{Fore.YELLOW}Steam Workshop mods detected, would you like to add them to the profile?{Style.RESET_ALL} (Y/N) "):
+                print(f"{Fore.GREEN}Steam workshop mods ignored")
                 return
 
             for name in next(os.walk(self.workshop_dir))[1]:
                 # Basically for numerically id-ed folder
                 if not os.path.isfile(os.path.join(self.workshop_dir,name,"contents.pak")):
-                    print(f"No contents.pak found in workshop mod {name}")
+                    print(f"{Fore.YELLOW}No contents.pak found in workshop mod {name}")
                     return
                 shutil.move(
                     os.path.join(self.workshop_dir,name,"contents.pak"),
@@ -83,7 +98,7 @@ class Profile():
                 )
                 print(f"Installed workshop mod {name}")
                      
-            print("Workshop mods added to profile, please unsubscribe from them")
+            print(f"{Fore.GREEN}Workshop mods added to profile, please unsubscribe from them")
     
 
     def delete(self):
