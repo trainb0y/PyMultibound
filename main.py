@@ -26,16 +26,17 @@ if not os.path.isfile(os.path.join(os.path.dirname(os.path.realpath(__file__)),"
 steamapps_dir = os.path.join("c:\\","Program Files (x86)","Steam","steamapps") # see docs on os.path.join 
 workshop_dir = os.path.join(steamapps_dir, "workshop","content","211820")
 starbound_dir = os.path.join(steamapps_dir,"common","Starbound")
-print(starbound_dir)
 
 profiles = []
 
 # Iterate through profiles and create them
 profiles_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),"profiles")
-for name in next(os.walk(profiles_dir))[1]:
-    prof = Profile()
-    prof.create(name,starbound_dir,workshop_dir)
-    profiles.append(prof)
+try:
+    for name in next(os.walk(profiles_dir))[1]:
+        prof = Profile()
+        prof.create(name,starbound_dir,workshop_dir)
+        profiles.append(prof)
+except StopIteration: pass # no profiles
 
 # If we don't have a vanilla profile, make one
 vanilla_exists = False
@@ -46,6 +47,7 @@ for prof in profiles:
 if not vanilla_exists:
     vanilla = Profile()
     vanilla.create("Vanilla",starbound_dir,workshop_dir)
+    profiles.append(vanilla)
 
 current_profile = profiles[0]
 
