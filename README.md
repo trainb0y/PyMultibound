@@ -16,5 +16,5 @@ When you choose a profile, it deletes the contents of the folders and replaces i
 ## Steam Workshop support
 PyMultibound supports steam workshop mods as part of profiles, but not in a conventional manner. 
 On a profile update it scans the currently installed workshop mods, and if you select `yes` when prompted it will take the `contents.pak`
-of each mod, rename it to `workshop-mod-\<id\>.pak and group it with the manually installed mods. 
-It is then safe to unsubscribe to your subscribed workshop mods; they are now part of the profile
+of each mod, rename it to `workshop-mod-\<id\>.pak` and group it with the manually installed mods. 
+It is then safe to unsubscribe to your subscribed workshop mods; they are now part of the profile and will be loaded when the profile is selected.
