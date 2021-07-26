@@ -91,12 +91,12 @@ class Profile():
                 # Basically for numerically id-ed folder
                 if not os.path.isfile(os.path.join(self.workshop_dir,name,"contents.pak")):
                     print(f"{Fore.YELLOW}No contents.pak found in workshop mod {name}")
-                    return
-                shutil.move(
-                    os.path.join(self.workshop_dir,name,"contents.pak"),
-                    os.path.join(self.directory,"mods",f"workshop-mod-{name}.pak")
-                )
-                print(f"Installed workshop mod {name}")
+                else:
+                    shutil.move(
+                        os.path.join(self.workshop_dir,name,"contents.pak"),
+                        os.path.join(self.directory,"mods",f"workshop-mod-{name}.pak")
+                    )
+                    print(f"Installed workshop mod {name}")
                      
             print(f"{Fore.GREEN}Workshop mods added to profile, please unsubscribe from them")
     

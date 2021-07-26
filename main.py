@@ -85,7 +85,10 @@ def load_profile():
     if "y" in input(f"{Fore.GREEN}Load profile {current_profile.name}? {Fore.YELLOW}This will erase the current game data!\n"+
         "(Save it as a profile/update the profile first) (Y/N) ").lower():
         current_profile.load()
-    else: print(f"\n{Fore.YELLOW}Profile load aborted")
+        return True
+    else: 
+        print(f"\n{Fore.YELLOW}Profile load aborted")
+        return False
 
 
 def switch_profile():
@@ -164,7 +167,8 @@ with the contents of the selected profile.
 def run_starbound():
     """Run starbound as it is now, and update the current profile on exit"""
     global current_profile
-    load_profile()
+    if load_profile() == False: # it failed
+        return
     cmd = os.path.join(starbound_dir,"win64","starbound.exe")
     # os.path.join() does not escape spaces, so
     # it thinks you are trying to run
@@ -173,7 +177,6 @@ def run_starbound():
     os.system(f'"{cmd}"')  # Run the game
     print(f"{Fore.GREEN}Updating profile, please wait...")
     print(f"{Fore.YELLOW}This may take a while if you have a large universe or many mods")
-    current_profile.update()
     print(f"{Fore.GREEN}Profile {current_profile.name} updated!")
 
 
