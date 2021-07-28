@@ -33,10 +33,15 @@ class Profile():
         self.directory = profile_dir
         self.starbound_dir = starbound_dir
         self.workshop_dir = workshop_dir
+        self.loaded = False
         
 
     def clear_starbound(self):
         """Delete all of the profile specific stuff in the starbound and workshop folders"""
+        if self.loaded:
+            print(f"{Fore.YELLOW}Clearing Starbound directory while profile {self.name} is loaded! Are you sure you want to procede? (Y/N)")
+            if "y" not in input(f"{Fore.RED}THIS WILL CLEAR THIS PROFILE").lower():
+                return
         for directory in ["mods","storage"]:
             for d in [os.path.join(self.starbound_dir,directory)]:
                 if os.path.exists(d): shutil.rmtree(d)
@@ -48,15 +53,27 @@ class Profile():
         self.clear_starbound()
         for directory in ["mods","storage"]:
             shutil.move(os.path.join(self.directory,directory),self.starbound_dir)
+        self.loaded = True
         
+    def unload(self):
+        """Bascially update(), but sets loaded to False and clears the Starbound dir"""
+        print(f"{Fore.GREEN}Unloading {self.name}...")
+        self.update()
+        self.clear_starbound()
+        self.loaded = False
+        print(f"{Fore.GREEN}Unloaded {self.name}")
         
 
     def update(self):
         """Update this profile with the current starbound data"""
+        if not self.loaded:
+            if "y" not in input(f"{Fore.YELLOW}Profile {self.name} is not currently loaded.\nAre you sure you want to update it? (Y/N)").lower(): return
+
+        
         if os.path.exists(self.directory):
             shutil.rmtree(self.directory)
 
-
+        print(f"{Fore.GREEN}Updating {self.name}...")
         # This next chunk bothers me.
         # I feel like I should be able to get it done with one try/except and
         # iterate through the types, but right now I lack the brainpower
@@ -83,8 +100,9 @@ class Profile():
         # to workshop-mod-(numerical id)
 
         if len(next(os.walk(self.workshop_dir))[1]) > 0:
-            if "y" not in input(f"{Fore.YELLOW}Steam Workshop mods detected, would you like to add them to the profile?{Style.RESET_ALL} (Y/N) "):
+            if "y" not in input(f"{Fore.YELLOW}Steam Workshop mods detected, would you like to add them to the profile?{Style.RESET_ALL} (Y/N) ").lower():
                 print(f"{Fore.GREEN}Steam workshop mods ignored")
+                print(f"{Fore.GREEN}Updated {self.name}")
                 return
 
             for name in next(os.walk(self.workshop_dir))[1]:
@@ -99,6 +117,8 @@ class Profile():
                     print(f"Installed workshop mod {name}")
                      
             print(f"{Fore.GREEN}Workshop mods added to profile, please unsubscribe from them")
+            print(f"{Fore.GREEN}Updated {self.name}")
+        
     
 
     def delete(self):
@@ -106,6 +126,7 @@ class Profile():
         script_dir = os.path.dirname(os.path.realpath(__file__))
         profiles_dir = os.path.join(script_dir,"profiles")
         shutil.rmtree(os.path.join(profiles_dir,self.name))
+        self.loaded = False
 
     
 
