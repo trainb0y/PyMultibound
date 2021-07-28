@@ -53,6 +53,9 @@ class Profile:
 
     def unload(self):
         """Basically update(), but sets loaded to False and clears the Starbound dir"""
+        if not self.loaded:
+            logging.warning("Attempt to unload non-loaded profile, ignoring!")
+            return
         logging.info(f'Unloading profile {self.name}...')
         print(f'{Fore.GREEN}Unloading {self.name}...')
         self.update(ignore_workshop=True)
