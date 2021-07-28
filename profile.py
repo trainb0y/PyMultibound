@@ -68,25 +68,25 @@ class Profile:
         logging.info(f'Profile {self.name} loaded into Starbound')
 
     def unload(self):
-        """Bascially update(), but sets loaded to False and clears the Starbound dir"""
+        """Basically update(), but sets loaded to False and clears the Starbound dir"""
         logging.info(f'Unloading profile {self.name}...')
         print(f'{Fore.GREEN}Unloading {self.name}...')
-        self.update()
+        self.update(ignore_workshop=True)
         self.loaded = False
         self.clear_starbound()
         print(f'{Fore.GREEN}Unloaded {self.name}')
         logging.info(f'Unloaded profile {self.name}')
 
-
-    def update(self):
+    def update(self, ignore_workshop=False):
         """Update this profile with the current starbound data"""
         if not self.loaded:
             logging.warning(f'Attempt to update profile {self.name} while not loaded! Asking user for confirmation')
             if 'y' not in input(
-                f'{Fore.YELLOW}Profile {self.name} is not currently loaded.\nAre you sure you want to update it? (Y/N) ').lower():
+                    f'{Fore.YELLOW}Profile {self.name} is not currently loaded.\nAre you sure you want to update it? (Y/N) ').lower():
                 logging.info('Profile update aborted by user')
                 return
-        else: logging.debug(f'Updating loaded profile {self.name}')
+        else:
+            logging.debug(f'Updating loaded profile {self.name}')
 
         if os.path.exists(self.directory):
             shutil.rmtree(self.directory)
@@ -125,6 +125,9 @@ class Profile:
         # First, we want to ask if we should include these workshop mods in the profile
         # If so, we should move the .pak s to our mods folder, and rename them
         # to workshop-mod-(numerical id)
+        if ignore_workshop:
+            logging.info(f"Ignoring Steam Workshop mods, finished updating profile {self.name}")
+            return
 
         logging.info("Checking for workshop mods...")
 
@@ -153,7 +156,8 @@ class Profile:
             print(f'{Fore.GREEN}Workshop mods added to profile, please unsubscribe from them')
             print(f'{Fore.GREEN}Updated {self.name}')
 
-        else: logging.info('No workshop mods found')
+        else:
+            logging.info('No workshop mods found')
         logging.info(f'Finished updating {self.name}')
 
     def delete(self):
