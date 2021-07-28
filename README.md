@@ -7,7 +7,7 @@
 Although it is stable enough that I use it, it is a work in progress and **probably has  MANY BUGS.** If you find a bug, please report it on the GitHub page.
 
 ## How it Works
-It works by creating snapshots "profiles" of the `storage` and `mods` folders of Starbound, and saving them as a profile.
+It works by creating snapshots ("profiles") of the `storage` and `mods` folders of Starbound, and saving them as a profile.
 
 When you choose a profile, it deletes the contents of the folders and replaces it with the contents of the selected profile.
 
