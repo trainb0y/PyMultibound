@@ -127,9 +127,9 @@ def switch_profile():
 
 def new_profile():
     """Create a new profile"""
-    name = input("Enter profile name: ")
+    profile_name = input("Enter profile name: ")
     profile = Profile()
-    profile.create(name, starbound_dir, workshop_dir)
+    profile.create(profile_name, starbound_dir, workshop_dir)
     profiles.append(profile)
 
 
@@ -197,7 +197,7 @@ with the contents of the selected profile.
 def run_starbound():
     """Run starbound as it is now, and update the current profile on exit"""
     global current_profile
-    if load_profile() == False:  # it failed
+    if not load_profile():  # it failed
         return
     cmd = os.path.join(starbound_dir, "win64", "starbound.exe")
     # os.path.join() does not escape spaces, so
@@ -218,8 +218,8 @@ if __name__ == "__main__":
 
     if settings["backup-warning"]:
         print(
-            f"{Fore.RED}{Back.YELLOW}{Style.BRIGHT}BE SURE TO MAKE A BACKUP BEFORE USING, THIS WILL DELETE THE STARBOUND DATA (See help for more info){Style.RESET_ALL}")
-        print(f"{Fore.RED} To disable this message, set backup-warning to false in settings.json")
+            f'{Fore.RED}{Back.YELLOW}{Style.BRIGHT}BE SURE TO MAKE A BACKUP BEFORE USING, THIS WILL DELETE THE STARBOUND DATA (See help for more info){Style.RESET_ALL}')
+        print(f'{Fore.RED} To disable this message, set backup-warning to false in settings.json')
     while True:  # Main Menu Loop
         main_menu = menu.Menu(
             "Main Menu - Please Select an Option", [
@@ -240,9 +240,9 @@ if __name__ == "__main__":
         try:
             option = int(input('>> '))
             result = main_menu.callback(option)
-            if result != False:
+            if result:
                 result()
             else:
-                print(f"{Fore.RED}Please enter a number corresponding to an option!")
+                print(f'{Fore.RED}Please enter a number corresponding to an option!')
         except ValueError:
-            print(f"{Fore.RED}Please enter a number!")
+            print(f'{Fore.RED}Please enter a number!')
