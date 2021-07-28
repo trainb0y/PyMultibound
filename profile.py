@@ -1,22 +1,6 @@
 import os, shutil, logging
 
-from colorama import Style, Fore, Back, init
-
-# Allows us to use colored text
-# How to use:
-#    print(f"{Fore.RED}RED TEXT{Style.RESET_ALL}")
-#    would print RED TEXT in the color red. f-strings make this
-#    so much easier!
-
-# Options:
-# Fore: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
-# Back: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
-# Style: DIM, NORMAL, BRIGHT, RESET_ALL
-
-init(autoreset=True)  # Should make this work for more windows use cases
-
-
-# also will remove the need to reset color after each line.
+from settingsloader import Style, Fore, Back
 
 class Profile:
 

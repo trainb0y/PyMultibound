@@ -1,13 +1,13 @@
-import logging
-import os, sys, json
+import os, sys, logging
 import menu
 from profile import Profile
-from colorama import Style, Fore, Back, init
+from settingsloader import Style, Fore, Back, load_settings
 
 # Version of PyMultibound
 version = '0.1-ALPHA'
 
-# Colorama allows us to use colored text
+# Fore, Back, etc. allow us to use colored text through Colorama
+# It is automatically replaced with placeholder "" by settingsloader if colored-text is false
 # How to use:
 #    print(f"{Fore.RED}RED TEXT{Style.RESET_ALL}")
 #    would print RED TEXT in the color red. f-strings make this
@@ -18,44 +18,11 @@ version = '0.1-ALPHA'
 # Back: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
 # Style: DIM, NORMAL, BRIGHT, RESET_ALL
 
-init(autoreset=True)  # Should make this work for more windows use cases
-# also will remove the need to reset color after each line.
-
 logging.basicConfig(format="%(asctime)s: %(levelname)s - %(module)s - %(funcName)s: %(message)s", level=logging.DEBUG,
                     filename="PyMultibound.log", filemode='w')
 logging.info(f'Initializing PyMultibound - {version}')
 
-# If the settings.json file does not exist, create it
-if not os.path.isfile(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.json')):
-    logging.info('settings.json not found, creating it')
-    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.json'), 'x') as f:
-        json.dump({
-            'backup-warning': True,
-            'colored-text': True,
-            'steamapps-directory': ('c:\\', 'Program Files (x86)', 'Steam', 'steamapps')
-        }, f)
-
-
-class PlaceHolder:  # There has GOT to be a better way to do this
-    """
-    A placeholder class to replace colorama codes with.
-    The entire idea of having to make this just rubs me the wrong
-    way.
-    """
-
-    def __init__(self):
-        self.BLACK, self.RED, self.GREEN, self.YELLOW = '', '', '', ''
-        self.BLUE, self.MAGENTA, self.CYAN, self.WHITE, self.RESET = '', '', '', '', ''
-        self.DIM, self.NORMAL, self.BRIGHT, self.RESET_ALL = '', '', '', ''
-
-
-with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.json')) as f:
-    settings = json.load(f)
-    logging.info("Got settings from settings.json")
-
-if not settings['colored-text']:  # Disable colorama
-    logging.info('Using PlaceHolder instead of colorama')
-    Style, Fore, Back = PlaceHolder(), PlaceHolder(), PlaceHolder()
+settings = load_settings()
 
 steamapps_dir = os.path.join(
     *settings['steamapps-directory'])  # see docs on os.path.join
