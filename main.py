@@ -204,6 +204,14 @@ def run_starbound():
     print(f'{Fore.GREEN}Profile {current_profile.name} updated!')
 
 
+def quit_program():
+    global current_profile
+    current_profile.unload()
+    print(f'{Fore.CYAN}Profiles saved, quitting...')
+    logging.info(f'Quitting PyMultibound - {version}')
+    sys.exit()
+
+
 if __name__ == '__main__':
 
     print(f'{Fore.CYAN}PyMultibound - {version}')
@@ -226,7 +234,7 @@ if __name__ == '__main__':
                 ('New Profile', new_profile),
                 ('Edit Profile', edit_profile),
                 ('Delete Profile', delete_profile),
-                ('Quit', sys.exit)])
+                ('Quit', quit_program)])
         # I put the menu definition in here so that the profile names can update
         # With this outside, even when you switch profiles it will say you are on 
         # the first one
