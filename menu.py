@@ -1,8 +1,11 @@
-import logging
-
+import logging, shutil
+from settingsloader import Fore, Style
 
 # Credit for this class goes to https://codereview.stackexchange.com/a/206233
-# Modified and simplified a little
+# Modified a little
+
+import os
+
 
 class Menu:
     def __init__(self, title, options):
@@ -12,9 +15,13 @@ class Menu:
 
     def display(self):
         logging.debug(f'Displaying menu "{self.title}')
-        string = self.title + '\n'
+        string = Fore.CYAN + self.title + Style.RESET_ALL + ':\n'
         for i, option in enumerate(self.options):
-            string += f'{i + 1}) {option[0]}\n'
+            string += f'-  {i + 1}) {option[0]}\n'
+
+        # Add header and footer
+        max_width = shutil.get_terminal_size()[0]
+        string = f'{"-"*max_width}\n{string}\n{"-" * max_width}'
 
         return string
 

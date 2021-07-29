@@ -226,11 +226,11 @@ if __name__ == '__main__':
     logging.debug('Entering main menu loop')
     while True:  # Main Menu Loop
         main_menu = menu.Menu(
-            'Main Menu - Please Select an Option', [
+            'Main Menu', [
                 ('Help', help_page),
-                (f'Run Starbound ({current_profile.name})', run_starbound),
+                (f'Run Starbound ({Fore.CYAN + current_profile.name + Style.RESET_ALL})', run_starbound),
                 ('Switch Profile', switch_profile),
-                (f'Update Profile ({current_profile.name})', current_profile.update),
+                (f'Update Profile ({Fore.CYAN + current_profile.name + Style.RESET_ALL})', current_profile.update),
                 ('New Profile', new_profile),
                 ('Edit Profile', edit_profile),
                 ('Delete Profile', delete_profile),
