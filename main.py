@@ -18,8 +18,6 @@ version = '0.1-ALPHA'
 # Back: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
 # Style: DIM, NORMAL, BRIGHT, RESET_ALL
 
-logging.basicConfig(format="%(asctime)s: %(levelname)s - %(module)s - %(funcName)s: %(message)s", level=logging.DEBUG,
-                    filename="PyMultibound.log", filemode='w')
 logging.info(f'Initializing PyMultibound - {version}')
 
 settings = load_settings()
@@ -202,6 +200,11 @@ def run_starbound():
     print(f'{Fore.YELLOW}This may take a while if you have a large universe or many mods')
     current_profile.unload()
     print(f'{Fore.GREEN}Profile {current_profile.name} updated!')
+    if settings['compress-profiles']:
+        print(f'{Fore.GREEN}Compressing {current_profile.name}. This may take a while.')
+        print(f'{Fore.GREEN}Profile compression can be disabled in settings.json!')
+        current_profile.compress()
+        print(f'{Fore.GREEN}Profile compressed!')
 
 
 def quit_program():
