@@ -162,7 +162,7 @@ class Profile:
         logging.info(f'Finished updating {self.name}')
 
     def compress(self):
-        """Compress the save's data to a <name>.zip file"""
+        """Compress the save's data"""
         if self.loaded:
             logging.warning("Attempt to compress loaded profile! Ignoring!")
             return
