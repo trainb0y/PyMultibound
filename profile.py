@@ -1,6 +1,12 @@
 import os, shutil, logging
 
-from settingsloader import Style, Fore, Back
+import settingsloader
+from settingsloader import Style, Fore, Back, load_settings
+
+settings = settingsloader.load_settings()  # I know this means it gets called multiple
+
+
+# times per run, but its a small little file operation and shouldn't really matter
 
 class Profile:
 
@@ -14,10 +20,14 @@ class Profile:
         profile_dir = os.path.join(profiles_dir, name)
         logging.debug(f'profile directory for {name} is {profile_dir}')
 
-        for directory in [os.path.join(profile_dir, 'mods'), os.path.join(profile_dir, 'storage')]:
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-                logging.debug(f'Created {directory} directory')
+        for option in ['mods', 'storage']:
+            if os.path.isfile(os.path.join(profile_dir,f'{option}-compressed.zip')):
+                logging.info(f'Found compressed {option} in {name}')
+            else:
+                directory = os.path.join(profile_dir, option)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                    logging.debug(f'Created {directory} directory')
 
         self.name = name  # Save the name
         self.directory = profile_dir
@@ -45,6 +55,10 @@ class Profile:
     def load(self):
         """Load this profile into the starbound install"""
         logging.info(f'Loading profile {self.name}...')
+
+        # First, inflate any compressed profile data
+        self.unpack()
+
         self.clear_starbound()
         for directory in ['mods', 'storage']:
             shutil.move(os.path.join(self.directory, directory), self.starbound_dir)
@@ -146,6 +160,58 @@ class Profile:
         else:
             logging.info('No workshop mods found')
         logging.info(f'Finished updating {self.name}')
+
+    def compress(self):
+        """Compress the save's data to a <name>.zip file"""
+        if self.loaded:
+            logging.warning("Attempt to compress loaded profile! Ignoring!")
+            return
+        if not settings['compress-profiles']:
+            logging.info('Call to Profile.compress() with compress-profiles false, ignoring!')
+        logging.info(f'Compressing profile {self.name}')
+        for option in ['mods', 'storage']:
+            if os.path.exists(os.path.join(self.directory, option)):
+                logging.debug(f'Creating archive {option}-compressed.zip')
+                shutil.make_archive(
+                    os.path.join(self.directory, f'{option}-compressed'),
+                    'zip',
+                    os.path.join(self.directory, option)
+                    # ,logger=logging  # Having shutil log to our log adds thousands of lines of
+                    # 2021-07-30 14:26:18,729: INFO - shutil - _make_zipfile: adding 'starbound.config'
+                    # so uhh, not sure we want that...
+                )
+                logging.debug(f'Deleting {option} folder for profile {self.name}')
+                shutil.rmtree(os.path.join(self.directory, option))  # Delete the non-compressed stuff
+            else:
+                logging.warning(f'{option} folder not found to zip in profile {self.name}!')
+
+    def unpack(self):
+        """Inflate <name>.zip back to the "mods" and "storage" folders"""
+        logging.info(f"Attempting to unpack profile {self.name}")
+        for option in ['mods','storage']:
+
+            zipped_file = os.path.join(self.directory, f'{option}-compressed.zip')
+            dest_dir = os.path.join(self.directory, option)
+
+            if not os.path.isfile(zipped_file):
+                logging.info(f"No compressed {option} zip found for {self.name}, ignoring")
+
+            if os.path.exists(dest_dir):
+                # There is already a folder for the unpacked data, abort
+                logging.warning(f"Unpacking {self.name} {option} would overwrite existing {option} directory. Aborting!")
+                return
+
+            # Now that we know we won't be overwriting anything and that the archive DOES
+            # actually exist, we can go ahead and unpack
+            shutil.unpack_archive(
+                zipped_file,
+                dest_dir,
+                'zip',
+            )
+            logging.info(f'Extracted {option}-compressed.zip to {option} folder')
+            os.remove(zipped_file)
+            logging.info(f'Deleted {option}-compressed.zip in profile {self.name}')
+
 
     def delete(self):
         """Delete all files relating to this profile"""
