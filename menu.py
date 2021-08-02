@@ -11,13 +11,13 @@ class Menu:
     def __init__(self, title, options):
         self.title = title
         self.options = options
-        logging.debug(f'Created menu "{title}"')
+        logging.debug(f"Created menu \"{title}\"")
 
     def display(self):
-        logging.debug(f'Displaying menu "{self.title}')
-        string = Fore.CYAN + self.title + Style.RESET_ALL + ':\n'
+        logging.debug(f"Displaying menu \"{self.title}\"")
+        string = Fore.CYAN + self.title + Style.RESET_ALL + ":\n"
         for i, option in enumerate(self.options):
-            string += f'-  {i + 1}) {option[0]}\n'
+            string += f"-  {i + 1}) {option[0]}\n"
 
         # Add header and footer
         max_width = shutil.get_terminal_size()[0]
