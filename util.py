@@ -1,4 +1,6 @@
 import os, json, logging
+import shutil
+
 import colorama
 
 # This handles loading the settings from settings.json
@@ -43,6 +45,21 @@ def load_settings():
         settings = json.load(f)
         logging.info("Got settings from settings.json")
         return settings
+
+
+def safe_move(src, dst):
+    """
+    Attempt to move a directory or file using shutil.move()
+    Returns true if it worked, false otherwise.
+    """
+    try:
+        shutil.move(src, dst)
+        return True
+    except Exception as e:
+        logging.error(f"An error occured while trying to move {src} to {dst}: {e}")
+        return False
+
+
 
 
 colorama.init(autoreset=True)

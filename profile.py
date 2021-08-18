@@ -60,7 +60,7 @@ class Profile:
 
         self.clear_starbound()
         for directory in ["mods", "storage"]:
-            shutil.move(os.path.join(self.directory, directory), self.starbound_dir)
+            util.safe_move(os.path.join(self.directory, directory), self.starbound_dir)
         self.loaded = True
         logging.info(f"Profile {self.name} loaded into Starbound")
 
@@ -98,7 +98,7 @@ class Profile:
         # iterate through the types, but right now I lack the brainpower
         # TODO: Clean this up!
         try:  # Mods
-            shutil.move(os.path.join(self.starbound_dir, "mods"), os.path.join(self.directory, "mods"))
+            util.safe_move(os.path.join(self.starbound_dir, "mods"), os.path.join(self.directory, "mods"))
             logging.debug("Moved mods folder to profile folder")
         except FileNotFoundError:
             logging.warning("Failed to move mods folder to profile folder; the Starbound folder does not have a mods "
@@ -109,7 +109,7 @@ class Profile:
                 logging.debug(f"Creating empty mods directory for profile {self.name}")
 
         try:  # Storage
-            shutil.move(os.path.join(self.starbound_dir, "storage"), os.path.join(self.directory, "storage"))
+            util.safe_move(os.path.join(self.starbound_dir, "storage"), os.path.join(self.directory, "storage"))
             logging.debug("Moved storage folder to profile folder")
         except FileNotFoundError:
             logging.warning("Failed to move storage folder to profile folder; the Starbound folder does not have a "
@@ -146,7 +146,7 @@ class Profile:
                     print(f"{Fore.YELLOW}No contents.pak found in workshop mod {name}")
                     logging.warning(f"No contents.pak file was found in workshop mod {name}")
                 else:
-                    shutil.move(
+                    util.safe_move(
                         os.path.join(self.workshop_dir, name, "contents.pak"),
                         os.path.join(self.directory, "mods", f"workshop-mod-{name}.pak")
                     )
