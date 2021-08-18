@@ -1,7 +1,7 @@
 import os, sys, logging
 import menu
 from profile import Profile
-from settingsloader import Style, Fore, Back, load_settings
+from util import Style, Fore, Back, load_settings
 
 # Version of PyMultibound
 version = "0.1-ALPHA"

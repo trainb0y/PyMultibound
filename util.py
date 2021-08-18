@@ -3,7 +3,7 @@ import colorama
 
 # This handles loading the settings from settings.json
 # as well as enabling and/or disabling colored text
-# from colorama
+# from colorama, and a few utility functions
 
 
 logging.basicConfig(

@@ -1,9 +1,9 @@
 import os, shutil, logging
 
-import settingsloader
-from settingsloader import Style, Fore, Back, load_settings
+import util
+from util import Style, Fore, Back, load_settings
 
-settings = settingsloader.load_settings()  # I know this means it gets called multiple
+settings = util.load_settings()  # I know this means it gets called multiple
 # times per run, but its a small little file operation and shouldn"t really matter
 
 

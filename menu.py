@@ -1,5 +1,5 @@
 import logging, shutil
-from settingsloader import Fore, Style
+from util import Fore, Style
 
 # Credit for this class goes to https://codereview.stackexchange.com/a/206233
 # Modified a little
