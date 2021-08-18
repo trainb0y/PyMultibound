@@ -189,7 +189,7 @@ def run_starbound():
     if not load_profile():  # it failed
         return
     logging.info("Starting starbound...")
-    cmd = os.path.join(starbound_dir, "win64", "starbound.exe")
+    cmd = os.path.join(starbound_dir, settings["starbound"], "starbound.exe")
     # os.path.join() does not escape spaces, so
     # it thinks you are trying to run
     # C:/Program because of the space in program files

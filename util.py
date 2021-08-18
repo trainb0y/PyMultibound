@@ -36,7 +36,9 @@ if not os.path.isfile(os.path.join(os.path.dirname(os.path.realpath(__file__)), 
             "backup-warning": True,
             "colored-text": True,
             "steamapps-directory": ("c:\\", "Program Files (x86)", "Steam", "steamapps"),
-            "compress-profiles": True
+            "compress-profiles": True,
+            "use-sbinit": False,
+            "starbound": "win64"
         }, f, indent=4)
 
 
