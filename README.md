@@ -9,7 +9,9 @@ Although it is stable enough that I use it, it is a work in progress and **proba
 ## How it Works
 It works by creating snapshots ("profiles") of the `storage` and `mods` folders of Starbound, and saving them as a profile.
 
-When you choose a profile, it deletes the contents of the folders and replaces it with the contents of the selected profile.
+When you choose a profile, it deletes the contents of the folders and replaces it with the contents of the selected profile.  
+
+I've been told that modifying `sbinit.config` will work instead of actually moving the folders. I may or may not look into implementing that in the future.
 
 (See the help option in the main menu for details)
 
