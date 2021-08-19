@@ -1,6 +1,6 @@
-import copy
 import json
 import os, shutil, logging
+from os.path import join
 
 import util
 from util import Style, Fore, Back, load_settings
@@ -17,17 +17,17 @@ class Profile:
         logging.info(f"Creating profile with name {name}, sb dir {starbound_dir} and workshop dir {workshop_dir}")
         # Get the directory of this script
         script_dir = os.path.dirname(os.path.realpath(__file__))
-        profiles_dir = os.path.join(script_dir, "profiles")
+        profiles_dir = join(script_dir, "profiles")
 
         # Now we make a directory for this particular profile, inside of the saves dir
-        profile_dir = os.path.join(profiles_dir, name)
+        profile_dir = join(profiles_dir, name)
         logging.debug(f"profile directory for {name} is {profile_dir}")
 
         for option in ["mods", "storage"]:
-            if os.path.isfile(os.path.join(profile_dir, f"{option}-compressed.zip")):
+            if os.path.isfile(join(profile_dir, f"{option}-compressed.zip")):
                 logging.info(f"Found compressed {option} in {name}")
             else:
-                directory = os.path.join(profile_dir, option)
+                directory = join(profile_dir, option)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
                     logging.debug(f"Created {directory} directory")
@@ -35,8 +35,8 @@ class Profile:
                     logging.info(f"Found pre-existing {directory} directory")
 
         if settings["use-sbinit"]:
-            if not os.path.isfile(os.path.join(profile_dir, "sbinit.config")):
-                with open(os.path.join(profile_dir, "sbinit.config"), "x") as f:
+            if not os.path.isfile(join(profile_dir, "sbinit.config")):
+                with open(join(profile_dir, "sbinit.config"), "x") as f:
                     json.dump(util.blank_sbinit, f, indent=2)
                     logging.info(f"Created blank sbinit.config for {name}")
             else:
@@ -65,7 +65,7 @@ class Profile:
                 logging.info("Starbound directory clear aborted")
                 return
         for directory in ["mods", "storage"]:
-            for d in [os.path.join(self.starbound_dir, directory)]:
+            for d in [join(self.starbound_dir, directory)]:
                 if os.path.exists(d): shutil.rmtree(d)
             logging.info('Deleted Starbound "mods" and "storage" folders')
 
@@ -78,7 +78,7 @@ class Profile:
 
         if settings["use-sbinit"]:
             logging.info(f"Loading {self.name} using sbinit.config")
-            if not os.path.isfile(os.path.join(self.directory, "sbinit.config")):
+            if not os.path.isfile(join(self.directory, "sbinit.config")):
                 # In all honesty we could just create a blank one here,
                 # but this implies it was moved/deleted or there is a serious bug,
                 # as there is no way use-sbinit could be false on profile creation
@@ -112,26 +112,26 @@ class Profile:
 
             logging.debug("Loading data from profile's sbinit...")
             try:
-                with open(os.path.join(self.directory, "sbinit.config"), "r") as f:
+                with open(join(self.directory, "sbinit.config"), "r") as f:
                     sbinit = json.load(f)
                     logging.debug("Got data from sbinit")
             except Exception as e:
                 logging.error(f"Error reading {self.name}'s sbinit.config': {e}")
                 return False
 
-            sbinit["assetDirectories"].append(os.path.join(self.directory, "mods"))
-            sbinit["storageDirectory"] = os.path.join(self.directory, "storage")
+            sbinit["assetDirectories"].append(join(self.directory, "mods"))
+            sbinit["storageDirectory"] = join(self.directory, "storage")
             logging.debug("Edited sbinit data")
 
 
 
             util.safe_move(
-                os.path.join(self.starbound_dir, settings["starbound"], "sbinit.config"),
-                os.path.join(self.directory, "sbinit-original.config")
+                join(self.starbound_dir, settings["starbound"], "sbinit.config"),
+                join(self.directory, "sbinit-original.config")
             )
             logging.info("Moved sbinit.config to sbinit-original.config")
 
-            with open(os.path.join(self.starbound_dir, settings["starbound"], "sbinit.config"), "x") as sb:
+            with open(join(self.starbound_dir, settings["starbound"], "sbinit.config"), "x") as sb:
                 json.dump(sbinit, sb)
                 self.loaded = True
                 logging.info("Replaced Starbound's sbinit.config")
@@ -143,7 +143,7 @@ class Profile:
             # Actually move the files
             self.clear_starbound()
             for directory in ["mods", "storage"]:
-                util.safe_move(os.path.join(self.directory, directory), self.starbound_dir)
+                util.safe_move(join(self.directory, directory), self.starbound_dir)
             self.loaded = True
             logging.info(f"Profile {self.name} loaded into Starbound")
             return True
@@ -156,8 +156,8 @@ class Profile:
         if settings["use-sbinit"]:
             logging.info("Replacing Starbound's sbinit.config with original")
             util.safe_move(
-                os.path.join(self.directory,"sbinit-original.config"),
-                os.path.join(self.starbound_dir, settings["starbound"], "sbinit.config")
+                join(self.directory,"sbinit-original.config"),
+                join(self.starbound_dir, settings["starbound"], "sbinit.config")
             )
             logging.info("Replaced Starbound's sbinit.config")
             self.loaded = False
@@ -192,25 +192,25 @@ class Profile:
         # iterate through the types, but right now I lack the brainpower
         # TODO: Clean this up!
         try:  # Mods
-            util.safe_move(os.path.join(self.starbound_dir, "mods"), os.path.join(self.directory, "mods"))
+            util.safe_move(join(self.starbound_dir, "mods"), join(self.directory, "mods"))
             logging.debug("Moved mods folder to profile folder")
         except FileNotFoundError:
             logging.warning("Failed to move mods folder to profile folder; the Starbound folder does not have a mods "
                             "folder!")
             print(f"{Fore.RED}Failed to update mods: Mods folder not found in starbound folder.")
-            if not os.path.exists(os.path.join(self.directory, "mods")):
-                os.makedirs(os.path.join(self.directory, "mods"))
+            if not os.path.exists(join(self.directory, "mods")):
+                os.makedirs(join(self.directory, "mods"))
                 logging.debug(f"Creating empty mods directory for profile {self.name}")
 
         try:  # Storage
-            util.safe_move(os.path.join(self.starbound_dir, "storage"), os.path.join(self.directory, "storage"))
+            util.safe_move(join(self.starbound_dir, "storage"), join(self.directory, "storage"))
             logging.debug("Moved storage folder to profile folder")
         except FileNotFoundError:
             logging.warning("Failed to move storage folder to profile folder; the Starbound folder does not have a "
                             "storage folder!")
             print(f"{Fore.RED}Failed to update storage: Storage folder not found in starbound folder.")
-            if not os.path.exists(os.path.join(self.directory, "storage")):
-                os.makedirs(os.path.join(self.directory, "storage"))
+            if not os.path.exists(join(self.directory, "storage")):
+                os.makedirs(join(self.directory, "storage"))
                 logging.debug(f"Creating empty storage directory for profile {self.name}")
 
         # Now for the hard part, workshop mods
@@ -236,13 +236,13 @@ class Profile:
 
             for name in next(os.walk(self.workshop_dir))[1]:
                 # Basically for numerically id-ed folder
-                if not os.path.isfile(os.path.join(self.workshop_dir, name, "contents.pak")):
+                if not os.path.isfile(join(self.workshop_dir, name, "contents.pak")):
                     print(f"{Fore.YELLOW}No contents.pak found in workshop mod {name}")
                     logging.warning(f"No contents.pak file was found in workshop mod {name}")
                 else:
                     util.safe_move(
-                        os.path.join(self.workshop_dir, name, "contents.pak"),
-                        os.path.join(self.directory, "mods", f"workshop-mod-{name}.pak")
+                        join(self.workshop_dir, name, "contents.pak"),
+                        join(self.directory, "mods", f"workshop-mod-{name}.pak")
                     )
                     print(f"Installed workshop mod {name}")
                     logging.info("Moved workshop mod {name} to {self.name}\"s mod folder")
@@ -263,18 +263,18 @@ class Profile:
             logging.info("Call to Profile.compress() with compress-profiles false, ignoring!")
         logging.info(f"Compressing profile {self.name}")
         for option in ["mods", "storage"]:
-            if os.path.exists(os.path.join(self.directory, option)):
+            if os.path.exists(join(self.directory, option)):
                 logging.debug(f"Creating archive {option}-compressed.zip")
                 shutil.make_archive(
-                    os.path.join(self.directory, f"{option}-compressed"),
+                    join(self.directory, f"{option}-compressed"),
                     "zip",
-                    os.path.join(self.directory, option)
+                    join(self.directory, option)
                     # ,logger=logging  # Having shutil log to our log adds thousands of lines of
                     # 2021-07-30 14:26:18,729: INFO - shutil - _make_zipfile: adding "starbound.config"
                     # so uhh, not sure we want that...
                 )
                 logging.debug(f"Deleting {option} folder for profile {self.name}")
-                shutil.rmtree(os.path.join(self.directory, option))  # Delete the non-compressed stuff
+                shutil.rmtree(join(self.directory, option))  # Delete the non-compressed stuff
             else:
                 logging.warning(f"{option} folder not found to zip in profile {self.name}!")
 
@@ -283,8 +283,8 @@ class Profile:
         logging.info(f"Attempting to unpack profile {self.name}")
         for option in ["mods", "storage"]:
 
-            zipped_file = os.path.join(self.directory, f"{option}-compressed.zip")
-            dest_dir = os.path.join(self.directory, option)
+            zipped_file = join(self.directory, f"{option}-compressed.zip")
+            dest_dir = join(self.directory, option)
 
             if not os.path.isfile(zipped_file):
                 logging.info(f"No compressed {option} zip found for {self.name}, ignoring")
