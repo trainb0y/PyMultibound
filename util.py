@@ -67,6 +67,22 @@ def safe_move(src, dst):
 colorama.init(autoreset=True)
 Style, Fore, Back = colorama.Style, colorama.Fore, colorama.Back
 
+blank_sbinit = {
+  "assetDirectories" : [
+    "..\\assets\\",
+    "..\\mods\\"
+  ],
+
+  "storageDirectory" : "..\\storage\\",
+
+  "defaultConfiguration" : {
+    "gameServerBind" : "*",
+    "queryServerBind" : "*",
+    "rconServerBind" : "*"
+  }
+}
+
+
 if not load_settings()["colored-text"]:
     logging.info("Using PlaceHolder instead of colorama")
     Style, Fore, Back = PlaceHolder(), PlaceHolder(), PlaceHolder()

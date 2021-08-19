@@ -96,8 +96,7 @@ def load_profile():
     if "y" in input(
             f"{Fore.GREEN}Load profile {current_profile.name}? {Fore.YELLOW}This will erase the current game data!\n" +
             "(Save it as a profile/update the profile first) (Y/N) ").lower():
-        current_profile.load()
-        return True
+        return current_profile.load()
     else:
         logging.info("Profile load aborted")
         return False
@@ -187,6 +186,7 @@ def run_starbound():
     """Run starbound as it is now, and update the current profile on exit"""
     global current_profile
     if not load_profile():  # it failed
+        logging.error(f"Failed to load profile {current_profile.name}, not starting Starbound.")
         return
     logging.info("Starting starbound...")
     cmd = os.path.join(starbound_dir, settings["starbound"], "starbound.exe")

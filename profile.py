@@ -1,9 +1,13 @@
+import copy
+import json
 import os, shutil, logging
 
 import util
 from util import Style, Fore, Back, load_settings
 
 settings = util.load_settings()  # I know this means it gets called multiple
+
+
 # times per run, but its a small little file operation and shouldn"t really matter
 
 
@@ -20,13 +24,23 @@ class Profile:
         logging.debug(f"profile directory for {name} is {profile_dir}")
 
         for option in ["mods", "storage"]:
-            if os.path.isfile(os.path.join(profile_dir,f"{option}-compressed.zip")):
+            if os.path.isfile(os.path.join(profile_dir, f"{option}-compressed.zip")):
                 logging.info(f"Found compressed {option} in {name}")
             else:
                 directory = os.path.join(profile_dir, option)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
                     logging.debug(f"Created {directory} directory")
+                else:
+                    logging.info(f"Found pre-existing {directory} directory")
+
+        if settings["use-sbinit"]:
+            if not os.path.isfile(os.path.join(profile_dir, "sbinit.config")):
+                with open(os.path.join(profile_dir, "sbinit.config"), "x") as f:
+                    json.dump(util.blank_sbinit, f, indent=2)
+                    logging.info(f"Created blank sbinit.config for {name}")
+            else:
+                logging.info(f"Found existing sbinit.config for {name}")
 
         self.name = name  # Save the name
         self.directory = profile_dir
@@ -38,6 +52,10 @@ class Profile:
     def clear_starbound(self):
         """Delete all of the profile specific stuff in the starbound and workshop folders"""
         logging.debug(f"Call to clear_starbound() in profile {self.name}")
+        if settings["use-sbinit"]:
+            logging.critical("Attempted to clear Starbound, but we're set to use sbinit.config!")
+            raise Exception("Attempted to clear Starbound, but we're set to use sbinit.config! This is a critical bug!")
+
         if self.loaded:
             logging.warning("Attempt to clear starbound while this profile is loaded! Asking user for confirmation.")
             print(
@@ -58,24 +76,100 @@ class Profile:
         # First, inflate any compressed profile data
         self.unpack()
 
-        self.clear_starbound()
-        for directory in ["mods", "storage"]:
-            util.safe_move(os.path.join(self.directory, directory), self.starbound_dir)
-        self.loaded = True
-        logging.info(f"Profile {self.name} loaded into Starbound")
+        if settings["use-sbinit"]:
+            logging.info(f"Loading {self.name} using sbinit.config")
+            if not os.path.isfile(os.path.join(self.directory, "sbinit.config")):
+                # In all honesty we could just create a blank one here,
+                # but this implies it was moved/deleted or there is a serious bug,
+                # as there is no way use-sbinit could be false on profile creation
+                # and be true here
+
+                # ...and also I already wrote all of this before I thought
+                # of just creating one :) -trainb0y1
+
+                print(f"\n{Fore.RED}No sbinit.config found for profile {self.name}!")
+                print("Either you moved or deleted it after you started this program, or this")
+                print("is a bug, please report it (along with PyMultibound.log) on the GitHub!")
+                print("https://github.com/trainb0y1/PyMultibound/issues\n")
+                print()
+                print("Will attempt to load profile by moving files...")
+
+                logging.warning("Attempted to load profile using sbinit but no sbinit.config found for this profile!")
+                logging.info("Attempting to load profile by moving files...")
+
+                settings["use-sbinit"] = False
+                self.load()
+                settings["use-sbinit"] = True
+                return False
+
+            # Take the current sbinit.config, add our
+            # storage folder and mods folder
+
+            # DONT DELETE THIS PROFILE'S SBINIT.CONFIG
+            # in case the user has custom stuff in there.
+            # we don't really want to have to deal with undoing
+            # this, it's easier just to leave it
+
+            logging.debug("Loading data from profile's sbinit...")
+            try:
+                with open(os.path.join(self.directory, "sbinit.config"), "r") as f:
+                    sbinit = json.load(f)
+                    logging.debug("Got data from sbinit")
+            except Exception as e:
+                logging.error(f"Error reading {self.name}'s sbinit.config': {e}")
+                return False
+
+            sbinit["assetDirectories"].append(os.path.join(self.directory, "mods"))
+            sbinit["storageDirectory"] = os.path.join(self.directory, "storage")
+            logging.debug("Edited sbinit data")
+
+
+
+            util.safe_move(
+                os.path.join(self.starbound_dir, settings["starbound"], "sbinit.config"),
+                os.path.join(self.directory, "sbinit-original.config")
+            )
+            logging.info("Moved sbinit.config to sbinit-original.config")
+
+            with open(os.path.join(self.starbound_dir, settings["starbound"], "sbinit.config"), "x") as sb:
+                json.dump(sbinit, sb)
+                self.loaded = True
+                logging.info("Replaced Starbound's sbinit.config")
+                return True
+
+
+        else:
+            logging.info(f"Loading {self.name} by moving files, not sbinit.config!")
+            # Actually move the files
+            self.clear_starbound()
+            for directory in ["mods", "storage"]:
+                util.safe_move(os.path.join(self.directory, directory), self.starbound_dir)
+            self.loaded = True
+            logging.info(f"Profile {self.name} loaded into Starbound")
+            return True
 
     def unload(self):
         """Basically update(), but sets loaded to False and clears the Starbound dir"""
         if not self.loaded:
             logging.warning("Attempt to unload non-loaded profile, ignoring!")
             return
-        logging.info(f"Unloading profile {self.name}...")
-        print(f"{Fore.GREEN}Unloading {self.name}...")
-        self.update(ignore_workshop=True)
-        self.loaded = False
-        self.clear_starbound()
-        print(f"{Fore.GREEN}Unloaded {self.name}")
-        logging.info(f"Unloaded profile {self.name}")
+        if settings["use-sbinit"]:
+            logging.info("Replacing Starbound's sbinit.config with original")
+            util.safe_move(
+                os.path.join(self.directory,"sbinit-original.config"),
+                os.path.join(self.starbound_dir, settings["starbound"], "sbinit.config")
+            )
+            logging.info("Replaced Starbound's sbinit.config")
+            self.loaded = False
+
+        else:
+            logging.info(f"Unloading profile {self.name}...")
+            print(f"{Fore.GREEN}Unloading {self.name}...")
+            self.update(ignore_workshop=True)
+            self.loaded = False
+            self.clear_starbound()
+            print(f"{Fore.GREEN}Unloaded {self.name}")
+            logging.info(f"Unloaded profile {self.name}")
 
     def update(self, ignore_workshop=False):
         """Update this profile with the current starbound data"""
@@ -187,17 +281,19 @@ class Profile:
     def unpack(self):
         """Inflate <name>.zip back to the "mods" and "storage" folders"""
         logging.info(f"Attempting to unpack profile {self.name}")
-        for option in ["mods","storage"]:
+        for option in ["mods", "storage"]:
 
             zipped_file = os.path.join(self.directory, f"{option}-compressed.zip")
             dest_dir = os.path.join(self.directory, option)
 
             if not os.path.isfile(zipped_file):
                 logging.info(f"No compressed {option} zip found for {self.name}, ignoring")
+                return  # fixes dumb warning from next check
 
             if os.path.exists(dest_dir):
                 # There is already a folder for the unpacked data, abort
-                logging.warning(f"Unpacking {self.name} {option} would overwrite existing {option} directory. Aborting!")
+                logging.warning(
+                    f"Unpacking {self.name} {option} would overwrite existing {option} directory. Aborting!")
                 return
 
             # Now that we know we won"t be overwriting anything and that the archive DOES
@@ -218,7 +314,6 @@ class Profile:
             logging.warning(f"Deleting profile {self.name} while profile is loaded! This is probably an error!")
             print(f"{Fore.RED}WARNING: Deleting profile while profile is loaded!")
         script_dir = os.path.dirname(os.path.realpath(__file__))
-        profiles_dir = os.path.join(script_dir, "profiles")
-        shutil.rmtree(os.path.join(profiles_dir, self.name))
+        shutil.rmtree(self.directory)
         self.loaded = False
         logging.info(f"Deleted profile {self.name}")
