@@ -93,9 +93,12 @@ def load_profile():
     # Have the user select a profile and then load it in
     # profile = select_profile(profiles)
     logging.debug("Asking user for load confirmation")
-    if "y" in input(
-            f"{Fore.GREEN}Load profile {current_profile.name}? {Fore.YELLOW}This will erase the current game data!\n" +
-            "(Save it as a profile/update the profile first) (Y/N) ").lower():
+    print(f"{Fore.GREEN}Load profile {current_profile.name}? (Y/N) ")
+    if not settings["use-sbinit"]:
+        print(f"{Fore.YELLOW}This will erase the current game data!")
+        print("Save it as a profile/update the profile first!")
+
+    if "y" in input().lower():
         return current_profile.load()
     else:
         logging.info("Profile load aborted")
