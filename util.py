@@ -34,6 +34,7 @@ if not os.path.isfile(os.path.join(os.path.dirname(os.path.realpath(__file__)), 
     with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "settings.json"), "x") as f:
         json.dump({
             "backup-warning": True,
+            "duration-warning": True,
             "colored-text": True,
             "steamapps-directory": ("c:\\", "Program Files (x86)", "Steam", "steamapps"),
             "compress-profiles": True,

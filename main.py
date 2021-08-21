@@ -126,6 +126,7 @@ def edit_profile():
 
 
 def delete_profile():
+    global current_profile
     """Deletes a profile"""
     # Have the user select a profile and then "delyeet" it
     profile = select_profile(profiles)
@@ -136,6 +137,7 @@ def delete_profile():
         profiles.remove(profile)
         print(f"{Fore.GREEN}Deleted {profile.name}")
         logging.info(f"Deleted profile {profile.name}")
+        current_profile = select_profile(profiles)
     else:
         print(f"\n{Fore.YELLOW}Profile deletion aborted")
         logging.info(f"Aborted deletion of {profile.name}")
@@ -200,7 +202,11 @@ def run_starbound():
     os.system(f'"{cmd}"')  # Run the game
     logging.info("Starbound closed, updating profile")
     print(f"{Fore.GREEN}Updating profile, please wait...")
-    print(f"{Fore.YELLOW}This may take a while if you have a large universe or many mods")
+    if (not settings["use-sbinit"]) or settings["duration-warning"]:
+        print(f"{Fore.YELLOW}This may take a while if you have a large universe or many mods")
+        print(f"{Fore.GREEN}If it takes too long, try setting `use-sbinit` to true in settings.json.")
+        print(f"{Fore.GREEN}However, that is an experimental feature and likely has bugs.")
+        print(f"{Fore.GREEN}To disable this warning, set duration-warning to false in the settings file")
     current_profile.unload()
     print(f"{Fore.GREEN}Profile {current_profile.name} updated!")
     if settings["compress-profiles"]:
