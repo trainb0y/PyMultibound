@@ -22,6 +22,8 @@ logging.info(f"Initializing PyMultibound - {version}")
 
 settings = load_settings()
 
+logging.info(f"Settings: {settings}")
+
 steamapps_dir = os.path.join(
     *settings["steamapps-directory"])  # see docs on os.path.join
 workshop_dir = os.path.join(steamapps_dir, "workshop", "content", "211820")
@@ -120,10 +122,6 @@ def new_profile():
     profiles.append(profile)
 
 
-def edit_profile():
-    """Edit profile menu (for changing name, etc)"""
-    print(f"{Fore.MAGENTA}Profile editing menu coming soon!")
-
 
 def delete_profile():
     global current_profile
@@ -172,14 +170,6 @@ with the contents of the selected profile.
 {Fore.GREEN}Switch Profile{Style.RESET_ALL}: Change the currently selected profile
 {Fore.GREEN}New Profile{Style.RESET_ALL}:    Creates a new profile, but does not define any mods/universe
         Use "Update Profile" with the new profile selected to define mods
-{Fore.GREEN}Edit Profile{Style.RESET_ALL}:   {Fore.RED}{Back.YELLOW}WIP{Style.RESET_ALL} This will eventually let you edit profile details.
-        For now, profiles must be edited manually. 
-            - You can change the profile name by changing the name of its folder
-                inside of the "profiles" folder
-            - You can add or remove mods directly from the "mods" folder inside of
-                the profile"s folder
-            - You can access the universe/save stuff in the "storage" folder inside
-                of the profile"s folder
 {Fore.GREEN}Delete Profile{Style.RESET_ALL}:  This will completely delete all of the selected profile"s data.
 {Fore.GREEN}Quit{Style.RESET_ALL}: Quit the program
     
@@ -244,7 +234,6 @@ if __name__ == "__main__":
                 ("Switch Profile", switch_profile),
                 (f"Update Profile ({Fore.CYAN + current_profile.name + Style.RESET_ALL})", current_profile.update),
                 ("New Profile", new_profile),
-                ("Edit Profile", edit_profile),
                 ("Delete Profile", delete_profile),
                 ("Quit", quit_program)])
         # I put the menu definition in here so that the profile names can update
