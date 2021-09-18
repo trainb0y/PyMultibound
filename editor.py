@@ -23,6 +23,8 @@ starbound_dir = os.path.join(steamapps_dir, "common", "Starbound")
 
 temp_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "temp")
 templates_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates")
+if not os.path.exists(templates_dir):
+    os.makedirs(templates_dir)
 
 if not os.path.exists(temp_dir):
     os.makedirs(temp_dir)
@@ -38,7 +40,6 @@ def character_editor_menu():
         while True:
             editor_menu = menu.Menu(
                 "Character Editor", [
-                    ("Find Players", select_player),
                     ("Make Template", make_template),
                     ("Apply Template", apply_template),
                     ("Delete Template", delete_template),
@@ -60,21 +61,89 @@ def character_editor_menu():
         logging.info("Exited editor loop")
 
 
+def load_character_json(path):
+    with open(path, "r") as f:
+        raw = f.read()
+        raw = raw.replace("inf,", "999999999,")  # FU uses "inf" which is invalid, so replace it with a big number
+        # It should automatically overwrite this anyway.
+        logging.info("Returning python object")
+        return json.loads(raw)
+
+
+def load_character_file(path):
+    logging.info(f"Loading python object from {path}")
+    if os.path.exists(join(temp_dir, "tempchar.json")):
+        os.remove(join(temp_dir, "tempchar.json"))
+    command = f'"{dump_json}" "{path}" "{join(temp_dir, "tempchar.json")}"'
+    os.system(f'"{command}"')
+    logging.info("Created temporary json file from .player")
+    return load_character_json(join(temp_dir, "tempchar.json"))
+
+
+def create_character_file(path, contents):
+    logging.info("Attempting to recreate .player file")
+    with open(join(temp_dir, "tempchar.json"), "w") as f:
+        json.dump(contents, f, indent=4)
+
+    command = f'"{make_json}" "{join(temp_dir, "tempchar.json")}" "{path}"'
+    os.system(f'"{command}"')
+
+
 def exit_editor():
     logging.info("Exiting editor loop")
     raise ExitedException
 
 
-def make_template(): pass
+def make_template():
+    logging.info("Attempting to create a new template")
+    template_character = load_character_file(select_character())
+    name = input("Template name: ")
+    with open(join(templates_dir, f"{name}.template"), "w+") as f:
+        json.dump(template_character["content"]["identity"], f, indent=4)
+    logging.info(f"Saved template {name}")
 
 
-def apply_template(): pass
+def apply_template():
+    original_character = load_character_file(select_character())
+    with open(select_template(), "r") as f:
+        template = json.load(f)
+    original_character["content"]["identity"] = template
+    create_character_file(join(os.path.dirname(os.path.realpath(__file__)),"test.player"), original_character)
 
 
-def delete_template(): pass
+def delete_template():
+    logging.info("Attempting to delete a template")
+    template = select_template()
+    if "y" in input(f"{Fore.YELLOW}Are you sure you want to delete this template? (y/n) ").lower():
+        os.remove(template)
+        print(f"{Fore.GREEN}Deleted template.")
+    logging.info("Deleted template")
 
 
-def select_player():
+def select_template():
+    templates = []
+    for template in os.listdir(templates_dir):
+        templates.append((template.replace(".template", ""), join(templates_dir,template)))
+
+    template_select_menu = menu.Menu(
+        "Select a Template", templates)
+
+    print(template_select_menu.display())
+
+    while True:
+        try:
+            option = int(input(">> "))
+            result = template_select_menu.callback(option)
+            if result:
+                return result
+            else:
+                print(f"{Fore.RED}Please enter a number corresponding to a character!")
+        except ValueError:
+            print(f"{Fore.RED}Please enter a number!")
+        print(template_select_menu.display())
+
+
+def select_character():
     character_filenames = []
     try:
         for name in next(os.walk(profiles_dir))[1]:
@@ -87,14 +156,9 @@ def select_player():
     # For each filename, get the character's actual name
     characters = []
     for filename in character_filenames:
-        command = f'"{dump_json}" "{filename}" "{join(temp_dir, "tempchar.json")}"'
-        os.system(f'"{command}"')
-        with open(join(temp_dir, "tempchar.json"), "r") as f:
-            raw = f.read()
-            raw = raw.replace("inf,", "999999999,")  # FU uses "inf" which is invalid, so replace it with a big number
-            # It should automatically overwrite this anyway.
-            player_json = json.loads(raw)
-            characters.append((f'{player_json["content"]["identity"]["name"]} - {player_json["content"]["uuid"]}',filename))
+        player_json = load_character_file(filename)
+        characters.append(
+            (f'{player_json["content"]["identity"]["name"]} - {player_json["content"]["uuid"]}', filename))
 
     character_menu = menu.Menu(
         "Select a Character", characters)
@@ -113,4 +177,3 @@ def select_player():
 
         print()
         print(character_menu.display())
-
