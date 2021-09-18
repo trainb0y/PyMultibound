@@ -1,5 +1,5 @@
 import os, sys, logging
-import menu
+import menu, editor
 from profile import Profile
 from util import Style, Fore, Back, load_settings
 
@@ -235,6 +235,7 @@ if __name__ == "__main__":
                 (f"Update Profile ({Fore.CYAN + current_profile.name + Style.RESET_ALL})", current_profile.update),
                 ("New Profile", new_profile),
                 ("Delete Profile", delete_profile),
+                ("Character Appearance Editor", editor.character_editor_menu),
                 ("Quit", quit_program)])
         # I put the menu definition in here so that the profile names can update
         # With this outside, even when you switch profiles it will say you are on 
