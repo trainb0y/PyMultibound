@@ -1,7 +1,7 @@
 import logging, os, json
 import menu
 from os.path import join
-from util import Style, Fore, Back, load_settings
+from util import *
 
 
 # Starbound character appearance editor
@@ -10,24 +10,6 @@ from util import Style, Fore, Back, load_settings
 # the existing appearance data in the .player file
 
 class ExitedException(Exception): pass
-
-
-settings = load_settings()
-
-profiles_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "profiles")
-steamapps_dir = os.path.join(
-    *settings["steamapps-directory"])  # see docs on os.path.join
-starbound_dir = os.path.join(steamapps_dir, "common", "Starbound")
-# Yes, I know I'm defining all of these twice, but whatever
-# TODO: Move these to util.py?
-
-temp_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "temp")
-templates_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates")
-if not os.path.exists(templates_dir):
-    os.makedirs(templates_dir)
-
-if not os.path.exists(temp_dir):
-    os.makedirs(temp_dir)
 
 dump_json = join(starbound_dir, "win32", "dump_versioned_json.exe")  # path to the dump_versioned_json.exe
 make_json = join(starbound_dir, "win32", "make_versioned_json.exe")  # path to the make_versioned_json.exe
@@ -85,8 +67,8 @@ def create_character_file(directory, contents):
     with open(join(temp_dir, "tempchar.json"), "w") as f:
         json.dump(contents, f, indent=4)
 
-    command = f'"{make_json}" "{join(temp_dir, "tempchar.json")}" "{join(directory,str(contents["content"]["uuid"])+".player")}"'
-    print(f'Destination: {join(directory,str(contents["content"]["uuid"])+".player")}')
+    command = f'"{make_json}" "{join(temp_dir, "tempchar.json")}" "{join(directory, str(contents["content"]["uuid"]) + ".player")}"'
+    print(f'Destination: {join(directory, str(contents["content"]["uuid"]) + ".player")}')
     os.system(f'"{command}"')
 
 
@@ -109,10 +91,14 @@ def apply_template():
     original_character = load_character_file(original_file)
     with open(select_template(), "r") as f:
         template = json.load(f)
+    if "y" in input("Preserve character name? (y/n) ").lower():
+        template["content"]["identity"]["name"] = original_character["content"]["identity"]["name"]
+
     original_character["content"]["identity"] = template
     if "y" in input("Are you sure you want to do this? (y/n) ").lower():
         create_character_file(os.path.dirname(original_file), original_character)
-    else: print("Aborted")
+    else:
+        print("Aborted")
 
 
 def delete_template():
@@ -127,7 +113,7 @@ def delete_template():
 def select_template():
     templates = []
     for template in os.listdir(templates_dir):
-        templates.append((template.replace(".template", ""), join(templates_dir,template)))
+        templates.append((template.replace(".template", ""), join(templates_dir, template)))
 
     template_select_menu = menu.Menu(
         "Select a Template", templates)
@@ -181,3 +167,4 @@ def select_character():
 
         print()
         print(character_menu.display())
+

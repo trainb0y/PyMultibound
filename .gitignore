@@ -115,4 +115,5 @@ dmypy.json
 
 # Stuff for PyMultibound specifically
 profiles/
+templates/
 settings.json

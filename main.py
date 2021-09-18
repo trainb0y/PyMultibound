@@ -1,7 +1,7 @@
 import os, sys, logging
 import menu, editor
 from profile import Profile
-from util import Style, Fore, Back, load_settings
+from util import *
 
 # Version of PyMultibound
 version = "0.1-ALPHA"
@@ -20,14 +20,7 @@ version = "0.1-ALPHA"
 
 logging.info(f"Initializing PyMultibound - {version}")
 
-settings = load_settings()
-
 logging.info(f"Settings: {settings}")
-
-steamapps_dir = os.path.join(
-    *settings["steamapps-directory"])  # see docs on os.path.join
-workshop_dir = os.path.join(steamapps_dir, "workshop", "content", "211820")
-starbound_dir = os.path.join(steamapps_dir, "common", "Starbound")
 
 logging.debug(f"Steamapps directory: {steamapps_dir}")
 logging.debug(f"Workshop directory: {workshop_dir}")
@@ -209,6 +202,7 @@ def run_starbound():
 def quit_program():
     global current_profile
     current_profile.unload()
+    shutil.rmtree(temp_dir)
     print(f"{Fore.CYAN}Profiles saved, quitting...")
     logging.info(f"Quitting PyMultibound - {version}")
     sys.exit()

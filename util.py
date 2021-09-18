@@ -83,7 +83,22 @@ blank_sbinit = {
   }
 }
 
-
-if not load_settings()["colored-text"]:
+settings = load_settings()
+if not settings["colored-text"]:
     logging.info("Using PlaceHolder instead of colorama")
     Style, Fore, Back = PlaceHolder(), PlaceHolder(), PlaceHolder()
+
+# Find all of the directories
+profiles_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "profiles") # Directory in which the profiles reside
+steamapps_dir = os.path.join(
+    *settings["steamapps-directory"])  # see docs on os.path.join          # Directory for all steam apps ("steamapps")
+starbound_dir = os.path.join(steamapps_dir, "common", "Starbound")         # Main Starbound directory inside of steamapps
+workshop_dir = os.path.join(steamapps_dir, "workshop", "content", "211820")   # Directory for starbound's workshop mods
+temp_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "temp")  # Directory to store temporary files in
+templates_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates") # Directory to store appearance templates in
+
+for directory in [temp_dir, templates_dir, profiles_dir]:
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+        logging.info(f"Created directory for {directory}")
+
