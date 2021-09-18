@@ -80,12 +80,12 @@ def load_character_file(path):
     return load_character_json(join(temp_dir, "tempchar.json"))
 
 
-def create_character_file(path, contents):
+def create_character_file(directory, contents):
     logging.info("Attempting to recreate .player file")
     with open(join(temp_dir, "tempchar.json"), "w") as f:
         json.dump(contents, f, indent=4)
 
-    command = f'"{make_json}" "{join(temp_dir, "tempchar.json")}" "{path}"'
+    command = f'"{make_json}" "{join(temp_dir, "tempchar.json")}" "{join(directory,str(contents["content"]["uuid"])+".player")}"'
     os.system(f'"{command}"')
 
 
@@ -104,11 +104,14 @@ def make_template():
 
 
 def apply_template():
-    original_character = load_character_file(select_character())
+    original_file = select_character()
+    original_character = load_character_file(original_file)
     with open(select_template(), "r") as f:
         template = json.load(f)
     original_character["content"]["identity"] = template
-    create_character_file(join(os.path.dirname(os.path.realpath(__file__)),"test.player"), original_character)
+    if "y" in input("Are you sure you want to do this? (y/n) ").lower():
+        create_character_file(os.path.dirname(os.path.realpath(__file__)), os.path.dirname(original_file))
+    print("Aborted")
 
 
 def delete_template():
