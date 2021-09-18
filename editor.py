@@ -86,6 +86,7 @@ def create_character_file(directory, contents):
         json.dump(contents, f, indent=4)
 
     command = f'"{make_json}" "{join(temp_dir, "tempchar.json")}" "{join(directory,str(contents["content"]["uuid"])+".player")}"'
+    print(f'Destination: {join(directory,str(contents["content"]["uuid"])+".player")}')
     os.system(f'"{command}"')
 
 
@@ -110,8 +111,8 @@ def apply_template():
         template = json.load(f)
     original_character["content"]["identity"] = template
     if "y" in input("Are you sure you want to do this? (y/n) ").lower():
-        create_character_file(os.path.dirname(os.path.realpath(__file__)), os.path.dirname(original_file))
-    print("Aborted")
+        create_character_file(os.path.dirname(original_file), original_character)
+    else: print("Aborted")
 
 
 def delete_template():
