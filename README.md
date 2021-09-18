@@ -15,14 +15,15 @@ It is then safe to unsubscribe to your subscribed workshop mods; they are now pa
 ## How it Works
 PyMultibound creates snapshots of the `storage` and `mods` folders of Starbound, and saves them in "profiles" - a directory in the same  location as the scripts.
 
-When you choose a profile, it deletes the contents of the folders and replaces them with the contents of the selected profile.  
-(This is the default mode, and is somewhat bug-low)
+The default mode is `use-sbinit: true` in `settings.json`. In  this mode it will edit the selected profile's `sbinit.config` file, adding the `mods` and `storage` folders to the asset and storage directory fields in the init file. It then replaces Starbound's `sbinit.config` with this custom one, switching them back once Starbound exists.
+In this mode PyMultibound will generate a fresh `sbinit.config` for each profile, meaning sbinits are profile-specific.
 
-I was told that I could do it all by modifying the `sbinit.config` file instead of moving the folders. 
-A basic system for this is implemented, but it is probably very buggy. I recommend using this mode only if moving the profiles takes an intolerably long time.   
-(Can be enabled by setting `"use-sbinit": true` in `settings.json`)
 
-In the `sbinit` mode PyMultibound will generate a fresh `sbinit.config` for each profile, meaning sbinits are profile-specific.
+Originally PyMultibound did not edit `sbinit.config` and instead manually moved the `mods` and `storage` folders of each profile. It can take a while with large installs/many mods. This mode can be enabled by setting `use-sbinit` to `false` in the config.
+
+## Character Appearance Editor
+### THIS FEATURE IS EXPERIMENTAL, MAKE BACKUPS BEFORE USING
+PyMultibound has a feature in which one can make appearance "templates" from pre-existing characters, and apply them to other characters. It works by replacing the `content/identity/` section of the .player file with the one from the template. As of now it does not update quest portraits, I may add this later. 
 
 ## Mac/Linux
-Theoretically this should work for Mac and Linux users as well as Windows. It should only require changing `steamapps-directory` in the settings, but I can't test it.
+Theoretically this should work for Mac and Linux users as well as Windows, with a few small directory changes in `util.py`. I can't test this, however, and there may be many issues.
