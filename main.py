@@ -94,7 +94,7 @@ def new_profile():
     profile = Profile()
     profile.create(profile_name, starbound_dir, workshop_dir)
     profiles.append(profile)
-    if "y" in input("Move current Starbound data into profile?").lower():
+    if "y" in input("Move current Starbound data into profile? ").lower():
         profile.get_starbound_data(starbound_dir, workshop_dir)
 
 

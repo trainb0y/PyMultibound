@@ -10,6 +10,9 @@ from util import *
 # the existing appearance data in the .player file
 
 # TODO: make it work with compressed profiles
+# TODO: Better error handling with missing player folder/file
+# TODO: Logging
+# TODO: Comment a lot
 
 class ExitedException(Exception): pass
 
