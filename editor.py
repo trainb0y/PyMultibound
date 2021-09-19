@@ -97,7 +97,7 @@ def apply_template():
     with open(select_template(), "r") as f:
         template = json.load(f)
     if "y" in input("Preserve character name? (y/n) ").lower():
-        template["content"]["identity"]["name"] = original_character["content"]["identity"]["name"]
+        template["name"] = original_character["content"]["identity"]["name"]
 
     original_character["content"]["identity"] = template
     if "y" in input("Are you sure you want to do this? (y/n) ").lower():
