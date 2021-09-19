@@ -9,6 +9,8 @@ from util import *
 # and then lets them apply the templates to existing characters, overwriting
 # the existing appearance data in the .player file
 
+# TODO: make it work with compressed profiles
+
 class ExitedException(Exception): pass
 
 dump_json = join(starbound_dir, "win32", "dump_versioned_json.exe")  # path to the dump_versioned_json.exe
