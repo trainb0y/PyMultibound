@@ -33,12 +33,9 @@ if not os.path.isfile(os.path.join(os.path.dirname(os.path.realpath(__file__)), 
     logging.info("settings.json not found, creating it")
     with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "settings.json"), "x") as f:
         json.dump({
-            "backup-warning": True,
-            "duration-warning": True,
             "colored-text": True,
             "steamapps-directory": ("c:\\", "Program Files (x86)", "Steam", "steamapps"),
             "compress-profiles": True,
-            "use-sbinit":True,
             "starbound": "win64"
         }, f, indent=4)
 
@@ -63,24 +60,22 @@ def safe_move(src, dst):
         return False
 
 
-
-
 colorama.init(autoreset=True)
 Style, Fore, Back = colorama.Style, colorama.Fore, colorama.Back
 
 blank_sbinit = {
-  "assetDirectories" : [
-    "..\\assets\\",
-    "..\\mods\\"
-  ],
+    "assetDirectories": [
+        "..\\assets\\",
+        "..\\mods\\"
+    ],
 
-  "storageDirectory" : "..\\storage\\",
+    "storageDirectory": "..\\storage\\",
 
-  "defaultConfiguration" : {
-    "gameServerBind" : "*",
-    "queryServerBind" : "*",
-    "rconServerBind" : "*"
-  }
+    "defaultConfiguration": {
+        "gameServerBind": "*",
+        "queryServerBind": "*",
+        "rconServerBind": "*"
+    }
 }
 
 settings = load_settings()
@@ -89,16 +84,17 @@ if not settings["colored-text"]:
     Style, Fore, Back = PlaceHolder(), PlaceHolder(), PlaceHolder()
 
 # Find all of the directories
-profiles_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "profiles") # Directory in which the profiles reside
+profiles_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                            "profiles")  # Directory in which the profiles reside
 steamapps_dir = os.path.join(
     *settings["steamapps-directory"])  # see docs on os.path.join          # Directory for all steam apps ("steamapps")
-starbound_dir = os.path.join(steamapps_dir, "common", "Starbound")         # Main Starbound directory inside of steamapps
-workshop_dir = os.path.join(steamapps_dir, "workshop", "content", "211820")   # Directory for starbound's workshop mods
+starbound_dir = os.path.join(steamapps_dir, "common", "Starbound")  # Main Starbound directory inside of steamapps
+workshop_dir = os.path.join(steamapps_dir, "workshop", "content", "211820")  # Directory for starbound's workshop mods
 temp_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "temp")  # Directory to store temporary files in
-templates_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates") # Directory to store appearance templates in
+templates_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                             "templates")  # Directory to store appearance templates in
 
 for directory in [temp_dir, templates_dir, profiles_dir]:
     if not os.path.exists(directory):
         os.makedirs(directory)
         logging.info(f"Created directory for {directory}")
-
