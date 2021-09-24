@@ -32,3 +32,19 @@ class Menu:
         else:
             logging.debug("Callback > False, option not found")
             return False
+
+    def select(self):
+        while True:
+            print(self.display())
+            try:
+                option = int(input(">> "))
+                result = self.callback(option)
+                if result:
+                    return result
+                else:
+                    print(f"{Fore.RED}Please enter a number corresponding to an option!")
+            except ValueError:
+                print(f"{Fore.RED}Please enter a number!")
+
+            print()
+

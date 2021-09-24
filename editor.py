@@ -23,26 +23,17 @@ make_json = join(starbound_dir, "win32", "make_versioned_json.exe")  # path to t
 def character_editor_menu():
     logging.info("Switched to profile editor loop")
     print(f"{Fore.RED}THIS IS EXPERIMENTAL, PLEASE MAKE A BACKUP OF YOUR CHARACTER BEFORE CONTINUING")
+    editor_menu = menu.Menu(
+        "Character Editor", [
+            ("Make Template", make_template),
+            ("Apply Template", apply_template),
+            ("Delete Template", delete_template),
+            ("Exit to Main Menu", exit_editor)
+        ]
+    )
     try:
         while True:
-            editor_menu = menu.Menu(
-                "Character Editor", [
-                    ("Make Template", make_template),
-                    ("Apply Template", apply_template),
-                    ("Delete Template", delete_template),
-                    ("Exit to Main Menu", exit_editor)])
-
-            print(editor_menu.display())
-
-            try:
-                option = int(input(">> "))
-                result = editor_menu.callback(option)
-                if result:
-                    result()
-                else:
-                    print(f"{Fore.RED}Please enter a number corresponding to an option!")
-            except ValueError as e:
-                print(f"{Fore.RED}Please enter a number! {e}")
+            editor_menu.select()()
 
     except ExitedException:
         logging.info("Exited editor loop")
@@ -123,19 +114,7 @@ def select_template():
     template_select_menu = menu.Menu(
         "Select a Template", templates)
 
-    print(template_select_menu.display())
-
-    while True:
-        try:
-            option = int(input(">> "))
-            result = template_select_menu.callback(option)
-            if result:
-                return result
-            else:
-                print(f"{Fore.RED}Please enter a number corresponding to a character!")
-        except ValueError:
-            print(f"{Fore.RED}Please enter a number!")
-        print(template_select_menu.display())
+    return template_select_menu.select()
 
 
 def select_character():
@@ -157,19 +136,5 @@ def select_character():
 
     character_menu = menu.Menu(
         "Select a Character", characters)
-
-    print(character_menu.display())
-    while True:
-        try:
-            option = int(input(">> "))
-            result = character_menu.callback(option)
-            if result:
-                return result
-            else:
-                print(f"{Fore.RED}Please enter a number corresponding to a character!")
-        except ValueError:
-            print(f"{Fore.RED}Please enter a number!")
-
-        print()
-        print(character_menu.display())
+    return character_menu.select()
 

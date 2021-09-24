@@ -64,22 +64,7 @@ def select_profile(profiles):
 
     profile_menu = menu.Menu(
         "Select a Profile", profile_options)
-    logging.debug("Created profile selection menu")
-    print(profile_menu.display())
-    while True:
-        try:
-            option = int(input(">> "))
-            result = profile_menu.callback(option)
-            if result:
-                logging.debug(f"User selected {result.name}")
-                return result
-            else:
-                print(f"{Fore.RED}Please enter a number corresponding to a profile!")
-        except ValueError:
-            print(f"{Fore.RED}Please enter a number!")
-
-        print()
-        print(profile_menu.display())
+    return profile_menu.select()
 
 
 def switch_profile():
@@ -185,18 +170,5 @@ if __name__ == "__main__":
                 ("Delete Profile", delete_profile),
                 ("Character Appearance Editor", editor.character_editor_menu),
                 ("Quit", quit_program)])
-        # I put the menu definition in here so that the profile names can update
-        # With this outside, even when you switch profiles it will say you are on 
-        # the first one
-        print()
-        print(main_menu.display())
 
-        try:
-            option = int(input(">> "))
-            result = main_menu.callback(option)
-            if result:
-                result()
-            else:
-                print(f"{Fore.RED}Please enter a number corresponding to an option!")
-        except ValueError:
-            print(f"{Fore.RED}Please enter a number!")
+        main_menu.select()()
