@@ -73,7 +73,7 @@ class Profile:
         # iterate through the types, but right now I lack the brainpower
         # TODO: Clean this up!
         try:  # Mods
-            util.safe_move(join(starbound_dir, "mods"), join(self.directory, "mods"))
+            safe_move(join(starbound_dir, "mods"), join(self.directory, "mods"))
             logging.debug("Moved mods folder to profile folder")
         except FileNotFoundError:
             logging.warning("Failed to move mods folder to profile folder; the Starbound folder does not have a mods "
@@ -84,7 +84,7 @@ class Profile:
                 logging.debug(f"Creating empty mods directory for profile {self.name}")
 
         try:  # Storage
-            util.safe_move(join(starbound_dir, "storage"), join(self.directory, "storage"))
+            safe_move(join(starbound_dir, "storage"), join(self.directory, "storage"))
             logging.debug("Moved storage folder to profile folder")
         except FileNotFoundError:
             logging.warning("Failed to move storage folder to profile folder; the Starbound folder does not have a "
@@ -118,7 +118,7 @@ class Profile:
                     print(f"{Fore.YELLOW}No contents.pak found in workshop mod {name}")
                     logging.warning(f"No contents.pak file was found in workshop mod {name}")
                 else:
-                    util.safe_move(
+                    safe_move(
                         join(workshop_dir, name, "contents.pak"),
                         join(self.directory, "mods", f"workshop-mod-{name}.pak")
                     )
