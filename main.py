@@ -31,7 +31,7 @@ logging.debug(f"Workshop directory: {workshop_dir}")
 profiles = []
 
 # Iterate through profiles and create them
-profiles_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "profiles")
+profiles_dir = join(os.path.dirname(os.path.realpath(__file__)), "profiles")
 try:
     for name in next(os.walk(profiles_dir))[1]:
         prof = Profile()
@@ -132,7 +132,7 @@ def run_starbound():
         return
     logging.info("Starting starbound...")
     cmd = f'"{util.starbound_executable}" ' \
-          f'-bootconfig "{os.path.join(current_profile.directory, "sbinit.config")}"'
+          f'-bootconfig "{join(current_profile.directory, "sbinit.config")}"'
     logging.info(f"Launch command: {cmd}")
 
     if platform.system() == "Windows": os.system(f'"{cmd}"')  # Run the game
