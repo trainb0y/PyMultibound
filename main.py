@@ -7,7 +7,7 @@ from profile import Profile
 from util import *
 
 # Version of PyMultibound
-version = "0.2-ALPHA"
+version = "0.3-ALPHA"
 
 # Fore, Back, etc. allow us to use colored text through Colorama
 # It is automatically replaced with placeholder "" by util.py if colored-text is false
