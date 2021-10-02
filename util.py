@@ -3,6 +3,7 @@ import logging
 import os
 import platform
 import shutil
+from os.path import join
 
 import colorama
 
@@ -14,7 +15,7 @@ import colorama
 logging.basicConfig(
     format="%(asctime)s: %(levelname)s - %(module)s - %(funcName)s: %(message)s",
     level=logging.DEBUG,
-    filename=os.path.join(os.path.dirname(os.path.realpath(__file__)), "PyMultibound.log"),
+    filename=join(os.path.dirname(os.path.realpath(__file__)), "PyMultibound.log"),
     filemode="w"
 )
 
@@ -32,9 +33,9 @@ class PlaceHolder:  # There has GOT to be a better way to do this
         self.DIM, self.NORMAL, self.BRIGHT, self.RESET_ALL = "", "", "", ""
 
 
-if not os.path.isfile(os.path.join(os.path.dirname(os.path.realpath(__file__)), "settings.json")):
+if not os.path.isfile(join(os.path.dirname(os.path.realpath(__file__)), "settings.json")):
     logging.info("settings.json not found, creating it")
-    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "settings.json"), "x") as f:
+    with open(join(os.path.dirname(os.path.realpath(__file__)), "settings.json"), "x") as f:
         json.dump({
             "colored-text": True,
             "steamapps-directory": ("c:\\", "Program Files (x86)", "Steam", "steamapps"),
@@ -43,7 +44,7 @@ if not os.path.isfile(os.path.join(os.path.dirname(os.path.realpath(__file__)), 
 
 
 def load_settings():
-    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "settings.json")) as f:
+    with open(join(os.path.dirname(os.path.realpath(__file__)), "settings.json")) as f:
         settings = json.load(f)
         logging.info("Got settings from settings.json")
         return settings
@@ -100,27 +101,27 @@ if not settings["colored-text"]:
     Style, Fore, Back = PlaceHolder(), PlaceHolder(), PlaceHolder()
 
 # Find all of the directories
-profiles_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+profiles_dir = join(os.path.dirname(os.path.realpath(__file__)),
                             "profiles")  # Directory in which the profiles reside
-steamapps_dir = os.path.join(
+steamapps_dir = join(
     *settings["steamapps-directory"])  # see docs on os.path.join          # Directory for all steam apps ("steamapps")
-starbound_dir = os.path.join(steamapps_dir, "common", "Starbound")  # Main Starbound directory inside of steamapps
-workshop_dir = os.path.join(steamapps_dir, "workshop", "content", "211820")  # Directory for starbound's workshop mods
-temp_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "temp")  # Directory to store temporary files in
-templates_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+starbound_dir = join(steamapps_dir, "common", "Starbound")  # Main Starbound directory inside of steamapps
+workshop_dir = join(steamapps_dir, "workshop", "content", "211820")  # Directory for starbound's workshop mods
+temp_dir = join(os.path.dirname(os.path.realpath(__file__)), "temp")  # Directory to store temporary files in
+templates_dir = join(os.path.dirname(os.path.realpath(__file__)),
                              "templates")  # Directory to store appearance templates in
 
 if platform.system() == "Linux":
-    asset_pack_tools_dir = os.path.join(starbound_dir, "linux")
-    starbound_executable = os.path.join(starbound_dir, "linux", "run-client.sh")
-    dump_json = os.path.join(starbound_dir, "linux", "dump_versioned_json.exe")  # path to the dump_versioned_json.exe
-    make_json = os.path.join(starbound_dir, "linux", "make_versioned_json.exe")  # path to the make_versioned_json.exe
+    asset_pack_tools_dir = join(starbound_dir, "linux")
+    starbound_executable = join(starbound_dir, "linux", "run-client.sh")
+    dump_json = join(starbound_dir, "linux", "dump_versioned_json.exe")  # path to the dump_versioned_json.exe
+    make_json = join(starbound_dir, "linux", "make_versioned_json.exe")  # path to the make_versioned_json.exe
     blank_sbinit = blank_sbinit_linux
 
 elif platform.system() == "Windows":
-    dump_json = os.path.join(starbound_dir, "win32", "dump_versioned_json.exe")  # path to the dump_versioned_json.exe
-    make_json = os.path.join(starbound_dir, "win32", "make_versioned_json.exe")  # path to the make_versioned_json.exe
-    starbound_executable = os.path.join(starbound_dir, "win64", "starbound.exe")
+    dump_json = join(starbound_dir, "win32", "dump_versioned_json.exe")  # path to the dump_versioned_json.exe
+    make_json = join(starbound_dir, "win32", "make_versioned_json.exe")  # path to the make_versioned_json.exe
+    starbound_executable = join(starbound_dir, "win64", "starbound.exe")
     blank_sbinit = blank_sbinit_windows
 
 for directory in [temp_dir, templates_dir, profiles_dir]:
