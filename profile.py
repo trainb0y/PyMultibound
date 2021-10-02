@@ -1,5 +1,4 @@
 import copy
-from os.path import join
 
 from util import *
 
