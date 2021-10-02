@@ -112,13 +112,6 @@ def help_page():
 Most of the options should be self-explanatory, but some aspects
 of this mod manager need a bit of explanation.
 
-This program works by taking snapshots, called "profiles" of the
-important parts of the main starbound directory.
-
-When you want to play a profile, it deletes the contents of the "mods"
-and "storage" folders inside of the Starbound folder and replaces them 
-with the contents of the selected profile.
-
 {Fore.CYAN}
 ---- PyMultibound Menu Options ---- 
 {Fore.GREEN}Help{Style.RESET_ALL}:            Brings up this message (clearly you know this by now)
