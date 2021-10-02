@@ -1,6 +1,6 @@
-import logging, os, json
-import menu
 from os.path import join
+
+import menu
 from util import *
 
 
@@ -15,9 +15,6 @@ from util import *
 # TODO: Comment a lot
 
 class ExitedException(Exception): pass
-
-dump_json = join(starbound_dir, "win32", "dump_versioned_json.exe")  # path to the dump_versioned_json.exe
-make_json = join(starbound_dir, "win32", "make_versioned_json.exe")  # path to the make_versioned_json.exe
 
 
 def character_editor_menu():
@@ -137,4 +134,3 @@ def select_character():
     character_menu = menu.Menu(
         "Select a Character", characters)
     return character_menu.select()
-

@@ -1,4 +1,7 @@
-import os, json, logging
+import json
+import logging
+import os
+import platform
 import shutil
 
 import colorama
@@ -36,7 +39,6 @@ if not os.path.isfile(os.path.join(os.path.dirname(os.path.realpath(__file__)), 
             "colored-text": True,
             "steamapps-directory": ("c:\\", "Program Files (x86)", "Steam", "steamapps"),
             "compress-profiles": True,
-            "starbound": "win64"
         }, f, indent=4)
 
 
@@ -63,7 +65,13 @@ def safe_move(src, dst):
 colorama.init(autoreset=True)
 Style, Fore, Back = colorama.Style, colorama.Fore, colorama.Back
 
-blank_sbinit = {
+# About the two sbinits:
+# When I switched to Linux I noticed the sbinit.config looked different.
+# I'm not sure if this is normal or if its something I did, but I figured I might as
+# well put it here.
+#
+# ...it also crashes without this
+blank_sbinit_windows = {
     "assetDirectories": [
         "..\\assets\\",
         "..\\mods\\"
@@ -76,6 +84,14 @@ blank_sbinit = {
         "queryServerBind": "*",
         "rconServerBind": "*"
     }
+}
+blank_sbinit_linux = {
+    "assetDirectories": [
+        "../assets/",
+        "../mods/"
+    ],
+
+    "storageDirectory": "../storage/"
 }
 
 settings = load_settings()
@@ -93,6 +109,19 @@ workshop_dir = os.path.join(steamapps_dir, "workshop", "content", "211820")  # D
 temp_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "temp")  # Directory to store temporary files in
 templates_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                              "templates")  # Directory to store appearance templates in
+
+if platform.system() == "Linux":
+    asset_pack_tools_dir = os.path.join(starbound_dir, "linux")
+    starbound_executable = os.path.join(starbound_dir, "linux", "run-client.sh")
+    dump_json = os.path.join(starbound_dir, "linux", "dump_versioned_json.exe")  # path to the dump_versioned_json.exe
+    make_json = os.path.join(starbound_dir, "linux", "make_versioned_json.exe")  # path to the make_versioned_json.exe
+    blank_sbinit = blank_sbinit_linux
+
+elif platform.system() == "Windows":
+    dump_json = os.path.join(starbound_dir, "win32", "dump_versioned_json.exe")  # path to the dump_versioned_json.exe
+    make_json = os.path.join(starbound_dir, "win32", "make_versioned_json.exe")  # path to the make_versioned_json.exe
+    starbound_executable = os.path.join(starbound_dir, "win64", "starbound.exe")
+    blank_sbinit = blank_sbinit_windows
 
 for directory in [temp_dir, templates_dir, profiles_dir]:
     if not os.path.exists(directory):

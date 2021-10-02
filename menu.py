@@ -1,11 +1,11 @@
-import logging, shutil
+import logging
+import shutil
+
 from util import Fore, Style
+
 
 # Credit for this class goes to https://codereview.stackexchange.com/a/206233
 # Modified a little
-
-import os
-
 
 class Menu:
     def __init__(self, title, options):
@@ -21,7 +21,7 @@ class Menu:
 
         # Add header and footer
         max_width = shutil.get_terminal_size()[0]
-        string = f'{"-"*max_width}\n{string}\n{"-" * max_width}'
+        string = f'{"-" * max_width}\n{string}\n{"-" * max_width}'
 
         return string
 
@@ -47,4 +47,3 @@ class Menu:
                 print(f"{Fore.RED}Please enter a number!")
 
             print()
-

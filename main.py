@@ -1,5 +1,8 @@
-import os, sys, logging
-import menu, editor
+import sys
+
+import editor
+import menu
+import util
 from profile import Profile
 from util import *
 
@@ -135,10 +138,14 @@ def run_starbound():
         logging.error(f"Failed to load profile {current_profile.name}, not starting Starbound.")
         return
     logging.info("Starting starbound...")
-    cmd = f'"{os.path.join(starbound_dir, settings["starbound"], "starbound.exe")}" ' \
+    cmd = f'"{util.starbound_executable}" ' \
           f'-bootconfig "{os.path.join(current_profile.directory, "sbinit.config")}"'
     logging.info(f"Launch command: {cmd}")
-    os.system(f'"{cmd}"')  # Run the game
+
+    if platform.system() == "Windows": os.system(f'"{cmd}"')  # Run the game
+    if platform.system() == "Linux": os.system(cmd)  # TODO: find out why windows needs the extra "s
+    # Windows crashes without the "s, and linux crashes with them.
+
     if settings["compress-profiles"]:
         print(f"{Fore.GREEN}Compressing {current_profile.name}. This may take a while.")
         print(f"{Fore.GREEN}Profile compression can be disabled in settings.json!")
