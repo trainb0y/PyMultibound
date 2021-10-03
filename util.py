@@ -114,8 +114,8 @@ templates_dir = join(os.path.dirname(os.path.realpath(__file__)),
 if platform.system() == "Linux":
     asset_pack_tools_dir = join(starbound_dir, "linux")
     starbound_executable = join(starbound_dir, "linux", "run-client.sh")
-    dump_json = join(starbound_dir, "linux", "dump_versioned_json.exe")  # path to the dump_versioned_json.exe
-    make_json = join(starbound_dir, "linux", "make_versioned_json.exe")  # path to the make_versioned_json.exe
+    dump_json = join(starbound_dir, "linux", "dump_versioned_json")  # path to the dump_versioned_json.exe
+    make_json = join(starbound_dir, "linux", "make_versioned_json")  # path to the make_versioned_json.exe
     blank_sbinit = blank_sbinit_linux
 
 elif platform.system() == "Windows":

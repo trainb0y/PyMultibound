@@ -1,3 +1,6 @@
+import logging
+import sys
+
 import menu
 from util import *
 
@@ -45,12 +48,19 @@ def load_character_json(path):
 
 def load_character_file(path):
     logging.info(f"Loading python object from {path}")
-    if os.path.exists(join(temp_dir, "tempchar.json")):
-        os.remove(join(temp_dir, "tempchar.json"))
-    command = f'"{dump_json}" "{path}" "{join(temp_dir, "tempchar.json")}"'
-    os.system(f'"{command}"')
-    logging.info("Created temporary json file from .player")
-    return load_character_json(join(temp_dir, "tempchar.json"))
+    temp_char_path = join(temp_dir, "tempchar.json")
+    if os.path.exists(temp_char_path):
+        os.remove(temp_char_path)
+    command = f'"{dump_json}" "{path}" "{temp_char_path}"'
+    print(command)
+    if platform.system() == "Windows": os.system(f'"{command}"')
+    elif platform.system() == "Linux": os.system(command)
+    else:
+        logging.critical(f"Not on Windows or Linux ({platform.system()})")
+        return
+
+    logging.info(f"Created temporary json file from .player at {temp_char_path}")
+    return load_character_json(temp_char_path)
 
 
 def create_character_file(directory, contents):
@@ -60,7 +70,12 @@ def create_character_file(directory, contents):
 
     command = f'"{make_json}" "{join(temp_dir, "tempchar.json")}" "{join(directory, str(contents["content"]["uuid"]) + ".player")}"'
     print(f'Destination: {join(directory, str(contents["content"]["uuid"]) + ".player")}')
-    os.system(f'"{command}"')
+    if platform.system() == "Windows": os.system(f'"{command}"')
+    # TODO: Don't repeat this everywhere (2 in this file, one in main.py)
+    elif platform.system() == "Linux": os.system(command)
+    else:
+        logging.critical(f"Not on Windows or Linux ({platform.system()})")
+        return
 
 
 def exit_editor():
