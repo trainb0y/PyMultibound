@@ -93,7 +93,6 @@ def delete_profile():
     profile = select_profile(profiles)
     logging.debug("Asking user for profile delete confirmation ")
     if "y" in input(f"{Fore.GREEN}Delete profile {profile.name}? {Fore.YELLOW}This IS NOT REVERSABLE! (Y/N) ").lower():
-        profile.unload()
         profile.delete()
         profiles.remove(profile)
         print(f"{Fore.GREEN}Deleted {profile.name}")
