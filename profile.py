@@ -4,6 +4,8 @@ from util import *
 
 
 class Profile:
+    directory: str
+    name: str
 
     def create(self, name, starbound_dir, workshop_dir):
         logging.info(f"Creating profile with name {name}")
@@ -160,10 +162,6 @@ class Profile:
 
             zipped_file = join(self.directory, f"{option}-compressed.zip")
             dest_dir = join(self.directory, option)
-
-            if not os.path.isfile(zipped_file):
-                logging.info(f"No compressed {option} zip found for {self.name}, ignoring")
-                return  # fixes dumb warning from next check
 
             if os.path.exists(dest_dir):
                 # There is already a folder for the unpacked data, abort

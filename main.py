@@ -79,6 +79,11 @@ def switch_profile():
 def new_profile():
     """Create a new profile"""
     profile_name = input("Enter profile name: ")
+    if profile_name.strip() == "":
+        print(f"{Fore.YELLOW}Profile name must not be empty!")
+        return  # 0 character names have all sorts of issues, and deleting them
+        # deletes all profiles, as I painfully learned from experience
+
     profile = Profile()
     profile.create(profile_name, starbound_dir, workshop_dir)
     profiles.append(profile)

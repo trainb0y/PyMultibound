@@ -111,6 +111,7 @@ temp_dir = join(os.path.dirname(os.path.realpath(__file__)), "temp")  # Director
 templates_dir = join(os.path.dirname(os.path.realpath(__file__)),
                              "templates")  # Directory to store appearance templates in
 
+logging.info(f"Platform: {platform.system}")
 if platform.system() == "Linux":
     asset_pack_tools_dir = join(starbound_dir, "linux")
     starbound_executable = join(starbound_dir, "linux", "run-client.sh")
