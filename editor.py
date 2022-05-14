@@ -1,7 +1,4 @@
-import logging
-import sys
-
-import menu
+from PyMultibound import menu
 from util import *
 
 

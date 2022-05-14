@@ -1,7 +1,7 @@
 import sys
 
 import editor
-import menu
+from PyMultibound import menu
 import util
 from profile import Profile
 from util import *
