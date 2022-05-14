@@ -1,5 +1,6 @@
 # PyMultibound
 
+### Note, a complete rewrite is underway on a different branch, with a GUI and more fleshed-out features 
 Yet another Multibound-ish thing for Starbound. This lets you create and manage Starbound "profiles"
 letting you easily control what mods and what universe are active at what time.
 
