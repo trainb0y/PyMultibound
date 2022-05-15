@@ -1,6 +1,7 @@
 # PyMultibound
 
-### WIP Rewrite branch. See `main` for the functioning (but old and kinda dumb) version
+### WIP Rewrite. Some old features are still missing! (CLI, Character Appearance Editor)
+
 
 Yet another Multibound-ish thing for Starbound. This lets you create and manage Starbound "profiles" letting you easily control what mods and what universe are active at what time. (Basically different saves)
 
