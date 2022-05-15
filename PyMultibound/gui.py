@@ -1,7 +1,5 @@
 import sys
-
 from PyQt5.QtWidgets import *
-
 from PyMultibound.common import *
 
 
@@ -20,7 +18,6 @@ class MainWindow(QMainWindow):
         tools = QToolBar()
         self.addToolBar(tools)
         tools.addAction("Run Starbound", self.attemptRunStarbound)
-        tools.addAction("Settings", self.editSettings)
         tools.addAction("New Profile", self._newProfileDialog)
         tools.addAction("Delete Profile", self._deleteProfileDialog)
 
@@ -92,8 +89,6 @@ class MainWindow(QMainWindow):
             info.setStandardButtons(QMessageBox.Ok)
             info.exec_()
             return ""
-
-    def editSettings(self): pass
 
 
 if __name__ == '__main__':
