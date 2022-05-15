@@ -9,6 +9,12 @@ Although it is stable enough that I use it, it is a work in progress and probabl
 
 Note that for now it requires Starbound to be installed through Steam to correctly function. This will hopefully change in the future.
 
+## How to Use
+Run `PyMultibound/gui.py`
+Requires a recent Python(3) version and PyQt5 (Tested on 3.9 and 3.10)  
+Packaged executables and/or an install script coming soon:tm:  
+Note: Currently `cli.py` does nothing, will eventually have a command-line interface
+
 ## Steam Workshop support
 
 PyMultibound supports steam workshop mods as part of profiles, but not in a conventional manner. On profile creation, it optionally scans the currently installed workshop mods, and takes the contents.pak of each mod, renames it to `workshop-<name>-<version>.pak` and groups it with the manually installed mods. It is then safe to unsubscribe to your subscribed workshop mods; they are now part of the profile and will be loaded when the profile is selected.
