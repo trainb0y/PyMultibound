@@ -165,7 +165,7 @@ def getProfiles() -> [str]:
 
 
 def unpack(path: str) -> str:
-    logging.info(f"Unpacking {str}")
+    logging.info(f"Unpacking {path}")
     command = f'"{unpackAssets}" "{path}" "{path}-unpacked"'
     if platform.system() == "Windows": os.system(f'"{command}"')
     elif platform.system() == "Linux": os.system(command)
