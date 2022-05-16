@@ -1,10 +1,7 @@
-import logging
-import os
-import platform
-import shutil
 import copy
 import json
-from os.path import join
+import shutil
+
 from paths import *
 
 logging.basicConfig(
@@ -33,7 +30,6 @@ def safe_move(src, dst):
     except Exception as e:
         logging.error(f"An error occured while trying to move {src} to {dst}: {e}")
         return False
-
 
 
 def runStarbound(profile: str):

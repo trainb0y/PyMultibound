@@ -1,6 +1,8 @@
-import os, platform, logging, sys
+import logging
+import os
+import platform
+import sys
 from os.path import join
-
 
 # About the two sbinits:
 # When I switched to Linux I noticed the sbinit.config looked different.
@@ -30,7 +32,6 @@ blankLinuxSBInit = {
 
     "storageDirectory": "../storage/"
 }
-
 
 profilesDir = join(os.path.dirname(os.path.realpath(__file__)), os.pardir,
                    "profiles")  # Directory in which the profiles reside
