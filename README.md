@@ -35,7 +35,7 @@ I have no way to test on a Mac, and it probably won't work out of the box. Chanc
 The original PyMultibound (`v0.1`-`v0.3`) was centered on the idea of actually moving each profile's data into Starbound's folder, and was only sloppily changed when I realized all that was nececary was redirecting to a new `sbinit.config`. As such, it was overcomplicated and hard to maintain.
 
 ### What's New?
-A GUI! As of version 1.0 there is a GUI Using `PyQt5`, that lets you use all of the primary features of PyMultibound. Note that this is my first PyQt5 project, and as such might have some issues.
+A GUI! As of version 1.0 there is a GUI using `PyQt5`, that lets you use all of the primary features of PyMultibound. Note that this is my first PyQt5 project, and as such might have some issues.
 
 A multitude of annoying bugs have also been fixed.
 
