@@ -1,12 +1,19 @@
 # PyMultibound
 
-### WIP Rewrite branch. See `main` for the functioning (but old and kinda dumb) version
+### WIP Rewrite. Some old features are still missing! (CLI, Character Appearance Editor)
+
 
 Yet another Multibound-ish thing for Starbound. This lets you create and manage Starbound "profiles" letting you easily control what mods and what universe are active at what time. (Basically different saves)
 
 Although it is stable enough that I use it, it is a work in progress and probably has MANY, MANY BUGS. If you find a bug, please report it on the GitHub page.
 
 Note that for now it requires Starbound to be installed through Steam to correctly function. This will hopefully change in the future.
+
+## How to Use
+Run `PyMultibound/gui.py`
+Requires a recent Python(3) version and PyQt5 (Tested on 3.9 and 3.10)  
+Packaged executables and/or an install script coming soon:tm:  
+Note: Currently `cli.py` does nothing, will eventually have a command-line interface
 
 ## Steam Workshop support
 
