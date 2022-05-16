@@ -1,6 +1,5 @@
-import sys
 from PyQt5.QtWidgets import *
-from PyMultibound.common import *
+from common import *
 
 
 class MainWindow(QMainWindow):
