@@ -24,6 +24,7 @@ def safe_move(src, dst):
     Attempt to move a directory or file using shutil.move()
     Returns true if it worked, false otherwise.
     """
+    logging.debug(f"Moving {src} to {dst}")
     try:
         shutil.move(src, dst)
         return True
@@ -41,6 +42,7 @@ def runStarbound(profile: str):
           f'-bootconfig "{join(profilesDir, profile, "sbinit.config")}"'
     logging.info(f"Launch command: {cmd}")
     runCommand(cmd)
+    logging.info("Starbound stopped")
 
 
 def createProfile(name: str, imp: bool) -> bool:
@@ -120,8 +122,9 @@ def unpack(path: str) -> str:
     Unpack the .pak file at the given path,
     and save it to <path>-unpacked/
     """
-    logging.info(f"Unpacking {path}")
+    logging.debug(f"Unpacking {path}")
     runCommand(f'"{unpackAssets}" "{path}" "{path}-unpacked"')
+    logging.debug("Unpacked")
     return f"{path}-unpacked"
 
 
@@ -175,7 +178,9 @@ def saveCharacter(path: str, data: {}):
     """
     with open(temporaryPath, "w") as f:
         json.dump(data, f, indent=4)
+        logging.debug(f"Dumped {data} to the temporary path")
     runCommand(f'"{makeJson}" "{temporaryPath}" "{path}"')
+    logging.info(f"Saved {data} to a character at {path}")
 
 
 def runCommand(command: str):
@@ -202,10 +207,13 @@ def applyTemplate(templatePath: str, characterPath: str, preserveName: bool = Fa
     character = loadCharacter(characterPath)
     with open(templatePath, "r") as f:
         template = json.load(f)
+        logging.debug("Loaded template")
     if preserveName:
         template["name"] = character["content"]["identity"]["name"]
+        logging.debug("Preserved character name")
 
     character["content"]["identity"] = template
+    logging.info(f"Applied {templatePath} to {characterPath}")
     saveCharacter(characterPath, character)
 
 
@@ -214,6 +222,7 @@ def getTemplates() -> [(str, str)]:
     Get the file paths of all available templates
     Returns a list of tuples of (name, path)
     """
+    logging.debug("Attempting to get a list of templates")
     templates = []
     for template in os.listdir(templatesDir):
         templates.append((template.replace(".template", ""), join(templatesDir, template)))
@@ -226,6 +235,7 @@ def getCharacters() -> [(str, str, str)]:
     Return a list of all characters across all profiles
     Each character entry consists of (path, uuid, name)
     """
+    logging.debug("Attempting to get a list of characters")
     characters = []
     try:
         for name in next(os.walk(profilesDir))[1]:
@@ -240,6 +250,8 @@ def getCharacters() -> [(str, str, str)]:
                         logging.debug(f"Found character {name} ({uuid}) at {path}")
             except FileNotFoundError:
                 # if the profile exists but contains no players
+                logging.warning(f"Player folder not found for {name}")
+                logging.warning("This is likely because it does not yet contain any players")
                 continue
 
     except StopIteration:

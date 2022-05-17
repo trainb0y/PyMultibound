@@ -4,10 +4,9 @@ from common import *
 
 
 class MainWindow(QMainWindow):
-    """Main Window."""
 
     def __init__(self, parent=None):
-        """Initializer."""
+        logging.debug("Initializing GUI")
         super().__init__(parent)
         self.setWindowTitle('PyMultibound')
 
@@ -25,8 +24,10 @@ class MainWindow(QMainWindow):
         self.status = QStatusBar()
         self.status.showMessage(f"PyMultibound {VERSION}")
         self.setStatusBar(self.status)
+        logging.debug("Initialized GUI")
 
     def _newProfileDialog(self):
+        logging.debug("Creating new profile dialog")
         name, ok = QInputDialog.getText(self, "Create Profile", "Enter Profile Name:")
         if ok:
             q = QMessageBox()
@@ -41,11 +42,13 @@ class MainWindow(QMainWindow):
             else:
                 self.status.showMessage("Failed to create profile. Check the log for details.")
         else:
+            logging.debug("User aborted profile creation")
             self.status.showMessage("Aborted profile creation")
 
         self._updateProfileList()
 
     def _deleteProfileDialog(self):
+        logging.debug("Creating delete profile dialog")
         name = self._getSelectedProfile()
         if name == "":
             self.status.showMessage("Select a profile before deleting it!")
@@ -64,6 +67,7 @@ class MainWindow(QMainWindow):
                 self.status.showMessage(f"Failed to delete {name}, check the log for details")
         else:
             self.status.showMessage(f"Aborted deletion of {name}")
+            logging.debug("User aborted profile deletion")
 
         self._updateProfileList()
 
@@ -75,6 +79,7 @@ class MainWindow(QMainWindow):
         runStarbound(name)
 
     def _updateProfileList(self):
+        logging.debug("Updating profile list")
         self.profileList.clear()
         for profile in getProfiles():
             self.profileList.addItem(QListWidgetItem(profile))
@@ -83,12 +88,14 @@ class MainWindow(QMainWindow):
         return getSelectedListItem(self.profileList, "profile")
 
     def _openTemplateMenu(self):
+        logging.debug("Opening template menu")
         self.templateMenu = CharacterTemplateMenu()
         self.templateMenu.show()
 
 
 class CharacterTemplateMenu(QMainWindow):
     def __init__(self):
+        logging.debug("Initializing character template menu")
         super().__init__()
         self.setWindowTitle("PyMultibound Character Templates")
 
@@ -120,22 +127,30 @@ class CharacterTemplateMenu(QMainWindow):
         tools.addAction("Delete Template", self._deleteTemplate)
         tools.addAction("Help", self._openHelp)
 
+        logging.debug("Initialized template menu")
+
     def _openHelp(self): pass
 
     def _createTemplate(self):
+        logging.debug("Attempting to create template")
         character = self._getSelectedCharacter()
         if character == "": return
         for template in getTemplates():
             if template[0] == character[2]:
+                logging.warning("Attempted to create a template, but another template with the same name exists!")
+                logging.warning("Alerting user...")
                 alert = QMessageBox()
                 alert.setText(f"A template with name {character[2]} already exists!")
                 alert.setStandardButtons(QMessageBox.Ok)
                 alert.exec_()
+                logging.info("Aborted template creation")
                 return
-        createTemplate(character[0])
+        if (createTemplate(character[0])):
+            logging.info("Created template successfully")
         self._updateLists()
 
     def _deleteTemplate(self):
+        logging.debug("Creating template delete dialog")
         template = self._getSelectedTemplate()
         if template == "": return
         confirm = QMessageBox()
@@ -145,14 +160,18 @@ class CharacterTemplateMenu(QMainWindow):
         confirm.setIcon(QMessageBox.Warning)
         confirm.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes)
         if confirm.exec_() == QMessageBox.Yes:
+            logging.info(f"Deleting template {template}")
             os.remove(join(templatesDir, template+".template"))
             self._updateLists()
 
     def _applyTemplate(self):
+        logging.debug("Confirming character and template are selected")
         character = self._getSelectedCharacter()
         if character == "": return
         template = self._getSelectedTemplate()
         if template == "": return
+        logging.debug("Character and template selected")
+        logging.debug("Creating apply template dialog")
 
         q = QMessageBox()
         q.setWindowTitle("Apply Template")
@@ -160,7 +179,9 @@ class CharacterTemplateMenu(QMainWindow):
         q.setIcon(QMessageBox.Question)
         q.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         preserveName = q.exec_() == QMessageBox.Yes
+        logging.debug(f"Preserve character name {preserveName}")
 
+        logging.debug("Creating confirmation dialog")
         confirm = QMessageBox()
         confirm.setText(f"Are you sure you want to apply template {template} to {character[2]}?")
         confirm.setInformativeText("This cannot be undone!")
@@ -168,10 +189,13 @@ class CharacterTemplateMenu(QMainWindow):
         confirm.setIcon(QMessageBox.Warning)
         confirm.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes)
         if confirm.exec_() == QMessageBox.Yes:
+            logging.info(f"Applying template {template} to {character}")
             applyTemplate(join(templatesDir, template + ".template"), character[0], preserveName)
             self._updateLists()
+        logging.info("Aborted template application")
 
     def _updateLists(self):
+        logging.debug("Updating template/character lists")
         self.templateList.clear()
         for template in getTemplates():
             self.templateList.addItem(QListWidgetItem(template[0]))
@@ -190,12 +214,16 @@ class CharacterTemplateMenu(QMainWindow):
         name, uuid = compound.split(" - ")
         for character in self.characters:
             if character[1] == uuid: return character
+        logging.error("No character found matching the UUID! This is a bug!")
+        return ""
 
 
 def getSelectedListItem(l: QListWidget, name: str) -> str:
+    logging.debug(f"Attempting to get selected item from {l} (name: {name})")
     try:
         return l.selectedItems()[0].text()
     except:
+        logging.debug("Nothing selected in list")
         info = QMessageBox()
         info.setWindowTitle("Cannot Complete Operation")
         info.setText(f"Select a {name} first!")
@@ -206,6 +234,7 @@ def getSelectedListItem(l: QListWidget, name: str) -> str:
 
 
 if __name__ == '__main__':
+    logging.info("Running GUI")
     app = QApplication(sys.argv)
     win = MainWindow()
     win.show()
