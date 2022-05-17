@@ -63,3 +63,6 @@ elif platform.system() == "Linux":
 else:
     logging.critical("Unrecognized platform, unable to find steamapps directory")
     sys.exit()
+
+if not os.path.exists(profilesDir): os.mkdir(profilesDir)
+if not os.path.exists(templatesDir): os.mkdir(templatesDir)
