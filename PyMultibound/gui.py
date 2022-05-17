@@ -281,7 +281,7 @@ class CharacterTemplateMenu(QMainWindow):
         """
         return getSelectedListItem(self.templateList, "template")
 
-    def _getSelectedCharacter(self) -> (str, str, str) | str:
+    def _getSelectedCharacter(self) -> (str, str, str) or str:
         """
         Get the selected character.
         Returns (path, uuid, name) of the character
