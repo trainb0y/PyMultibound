@@ -11,7 +11,7 @@ logging.basicConfig(
     filemode="w"
 )
 
-VERSION = "v1.0.0"
+VERSION = "v1.0.1"
 
 logging.info(f"PyMultibound Version: {VERSION}, Platform: {platform.system()}")
 logging.debug("Profile Directory: " + profilesDir)
