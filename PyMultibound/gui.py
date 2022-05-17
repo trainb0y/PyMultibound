@@ -173,6 +173,18 @@ class CharacterTemplateMenu(QMainWindow):
         """
         Open a help/explanation dialog
         """
+        help = QMessageBox()
+        help.setWindowTitle("PyMultibound Template Help")
+        help.setText("""
+You can create a character appearance template by selecting a character and pressing "Create Template"
+Select a character and a template to Apply the template.
+This will change the character's Race, Gender, Appearance, and optionally Name to that of the template.
+        
+Note that this feature is experimental, and may have unforseen consequences on your player.
+Be sure to save a backup before use!
+        """)
+        help.setStandardButtons(QMessageBox.Ok)
+        help.exec_()
 
     def _createTemplate(self):
         """
