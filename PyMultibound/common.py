@@ -139,14 +139,14 @@ def loadJson(path: str) -> {}:
     return json.loads(raw)
 
 
-def makeTemplate(characterPath: str) -> bool:
+def createTemplate(characterPath: str) -> bool:
     """
     Make a template from the character at characterPath
     Saves it to templates/<character uuid>.template
     """
     logging.info("Attempting to create a new template")
     character = loadCharacter(characterPath)
-    templatePath = join(templatesDir, f"{character['content']['uuid']}.template")
+    templatePath = join(templatesDir, f"{character['content']['identity']['name']}.template")
     if os.path.exists(templatePath):
         logging.warning("Could not create template as it would overwrite a template of the same name!")
         return False
@@ -186,7 +186,6 @@ def runCommand(command: str):
     # Windows crashes without the "s, and linux crashes with them.
     if platform.system() == "Windows":
         os.system(f'"{command}"')
-    # TODO: Don't repeat this everywhere (2 in this file, one in main.py)
     elif platform.system() == "Linux":
         os.system(command)
     else:
@@ -210,13 +209,15 @@ def applyTemplate(templatePath: str, characterPath: str, preserveName: bool = Fa
     saveCharacter(characterPath, character)
 
 
-def getTemplates() -> [str]:
+def getTemplates() -> [(str, str)]:
     """
     Get the file paths of all available templates
+    Returns a list of tuples of (name, path)
     """
     templates = []
     for template in os.listdir(templatesDir):
         templates.append((template.replace(".template", ""), join(templatesDir, template)))
+        logging.debug(f"Found character template {template}")
     return templates
 
 
@@ -228,14 +229,18 @@ def getCharacters() -> [(str, str, str)]:
     characters = []
     try:
         for name in next(os.walk(profilesDir))[1]:
-            for character in os.listdir(join(profilesDir, name, "storage", "player")):
-                if character.endswith(".player"):
-                    path = join(profilesDir, name, "storage", "player", character)
-                    json = loadCharacter(path)
-                    name = json["content"]["identity"]["name"]
-                    uuid = json["content"]["uuid"]
-                    characters.append((path, uuid, name))
-                    logging.debug(f"Found character {name} ({uuid}) at {path}")
+            try:
+                for character in os.listdir(join(profilesDir, name, "storage", "player")):
+                    if character.endswith(".player"):
+                        path = join(profilesDir, name, "storage", "player", character)
+                        json = loadCharacter(path)
+                        name = json["content"]["identity"]["name"]
+                        uuid = json["content"]["uuid"]
+                        characters.append((path, uuid, name))
+                        logging.debug(f"Found character {name} ({uuid}) at {path}")
+            except FileNotFoundError:
+                # if the profile exists but contains no players
+                continue
 
     except StopIteration:
         logging.info("No existing characters found!")

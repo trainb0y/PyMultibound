@@ -36,7 +36,7 @@ blankLinuxSBInit = {
 profilesDir = join(os.path.dirname(os.path.realpath(__file__)), os.pardir,
                    "profiles")  # Directory in which the profiles reside
 templatesDir = join(os.path.dirname(os.path.realpath(__file__)), os.pardir, "templates")
-temporaryPath = join(templatesDir, "temp")
+temporaryPath = join(os.path.dirname(os.path.realpath(__file__)), os.pardir, "temp")
 
 if platform.system() == "Windows":
     steamappsDir = os.path.join(*["c:\\", "Program Files (x86)", "Steam", "steamapps"])

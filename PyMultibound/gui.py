@@ -20,6 +20,7 @@ class MainWindow(QMainWindow):
         tools.addAction("Run Starbound", self.attemptRunStarbound)
         tools.addAction("New Profile", self._newProfileDialog)
         tools.addAction("Delete Profile", self._deleteProfileDialog)
+        tools.addAction("Character Templates", self._openTemplateMenu)
 
         self.status = QStatusBar()
         self.status.showMessage(f"PyMultibound {VERSION}")
@@ -45,7 +46,7 @@ class MainWindow(QMainWindow):
         self._updateProfileList()
 
     def _deleteProfileDialog(self):
-        name = self.getSelectedProfile()
+        name = self._getSelectedProfile()
         if name == "":
             self.status.showMessage("Select a profile before deleting it!")
             return
@@ -67,7 +68,7 @@ class MainWindow(QMainWindow):
         self._updateProfileList()
 
     def attemptRunStarbound(self):
-        name = self.getSelectedProfile()
+        name = self._getSelectedProfile()
         if name == "":
             self.status.showMessage("Select a profile before starting Starbound!")
             return
@@ -78,17 +79,130 @@ class MainWindow(QMainWindow):
         for profile in getProfiles():
             self.profileList.addItem(QListWidgetItem(profile))
 
-    def getSelectedProfile(self) -> str:
-        try:
-            return self.profileList.selectedItems()[0].text()
-        except:
-            info = QMessageBox()
-            info.setWindowTitle("Cannot Complete Operation")
-            info.setText("Select a profile first!")
-            info.setIcon(QMessageBox.Information)
-            info.setStandardButtons(QMessageBox.Ok)
-            info.exec_()
-            return ""
+    def _getSelectedProfile(self) -> str:
+        return getSelectedListItem(self.profileList, "profile")
+
+    def _openTemplateMenu(self):
+        self.templateMenu = CharacterTemplateMenu()
+        self.templateMenu.show()
+
+
+class CharacterTemplateMenu(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("PyMultibound Character Templates")
+
+        self.grid = QGridLayout()
+        container = QWidget()
+        container.setLayout(self.grid)
+        self.setCentralWidget(container)
+
+        characterLabel = QLabel(self)
+        characterLabel.setText("Characters")
+        self.grid.addWidget(characterLabel)
+
+        self.characterList = QListWidget(self)
+        self.grid.addWidget(self.characterList)
+
+        templateLabel = QLabel(self)
+        templateLabel.setText("Templates")
+        self.grid.addWidget(templateLabel)
+
+        self.templateList = QListWidget(self)
+        self.grid.addWidget(self.templateList)
+
+        self._updateLists()
+
+        tools = QToolBar()
+        self.addToolBar(tools)
+        tools.addAction("Create Template", self._createTemplate)
+        tools.addAction("Apply Template", self._applyTemplate)
+        tools.addAction("Delete Template", self._deleteTemplate)
+        tools.addAction("Help", self._openHelp)
+
+    def _openHelp(self): pass
+
+    def _createTemplate(self):
+        character = self._getSelectedCharacter()
+        if character == "": return
+        for template in getTemplates():
+            if template[0] == character[2]:
+                alert = QMessageBox()
+                alert.setText(f"A template with name {character[2]} already exists!")
+                alert.setStandardButtons(QMessageBox.Ok)
+                alert.exec_()
+                return
+        createTemplate(character[0])
+        self._updateLists()
+
+    def _deleteTemplate(self):
+        template = self._getSelectedTemplate()
+        if template == "": return
+        confirm = QMessageBox()
+        confirm.setText(f"Are you sure you want to delete template {template}?")
+        confirm.setInformativeText("This cannot be undone!")
+        confirm.setWindowTitle("Delete Template")
+        confirm.setIcon(QMessageBox.Warning)
+        confirm.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes)
+        if confirm.exec_() == QMessageBox.Yes:
+            os.remove(join(templatesDir, template+".template"))
+            self._updateLists()
+
+    def _applyTemplate(self):
+        character = self._getSelectedCharacter()
+        if character == "": return
+        template = self._getSelectedTemplate()
+        if template == "": return
+
+        q = QMessageBox()
+        q.setWindowTitle("Apply Template")
+        q.setText("Preserve character name?")
+        q.setIcon(QMessageBox.Question)
+        q.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        preserveName = q.exec_() == QMessageBox.Yes
+
+        confirm = QMessageBox()
+        confirm.setText(f"Are you sure you want to apply template {template} to {character[2]}?")
+        confirm.setInformativeText("This cannot be undone!")
+        confirm.setWindowTitle("Apply Template")
+        confirm.setIcon(QMessageBox.Warning)
+        confirm.setStandardButtons(QMessageBox.Cancel | QMessageBox.Yes)
+        if confirm.exec_() == QMessageBox.Yes:
+            applyTemplate(join(templatesDir, template + ".template"), character[0], preserveName)
+            self._updateLists()
+
+    def _updateLists(self):
+        self.templateList.clear()
+        for template in getTemplates():
+            self.templateList.addItem(QListWidgetItem(template[0]))
+
+        self.characterList.clear()
+        self.characters = [] # to store UUID and Path, because we need more than just the name
+        for character in getCharacters():
+            self.characterList.addItem(QListWidgetItem(f"{character[2]} - {character[1]}"))
+            self.characters.append(character)
+
+    def _getSelectedTemplate(self) -> str:
+        return getSelectedListItem(self.templateList, "template")
+
+    def _getSelectedCharacter(self) -> str:
+        compound = getSelectedListItem(self.characterList, "character")
+        name, uuid = compound.split(" - ")
+        for character in self.characters:
+            if character[1] == uuid: return character
+
+
+def getSelectedListItem(l: QListWidget, name: str) -> str:
+    try:
+        return l.selectedItems()[0].text()
+    except:
+        info = QMessageBox()
+        info.setWindowTitle("Cannot Complete Operation")
+        info.setText(f"Select a {name} first!")
+        info.setIcon(QMessageBox.Information)
+        info.setStandardButtons(QMessageBox.Ok)
+        info.exec_()
+        return ""
 
 
 if __name__ == '__main__':
