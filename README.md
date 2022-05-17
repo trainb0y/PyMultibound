@@ -2,6 +2,7 @@
 
 ### WIP Rewrite. Some old features are still missing! (CLI, Profile Compression)
 
+[Chucklefish Forum Post](https://community.playstarbound.com/threads/pymultibound.168887/)
 
 Yet another Multibound-ish thing for Starbound. This lets you create and manage Starbound "profiles" letting you easily control what mods and what universe are active at what time. (Basically different saves)
 
@@ -28,7 +29,7 @@ PyMultibound creates snapshots of the storage and mods folders of Starbound, and
 ## Mac/Windows
 Although I can only test this on Linux, I've tried to make it support Windows too. If there are any issues when using Windows, please report it as a bug.
 
-I have no way to test on a Mac, and it probably won't work out of the box. Chances are most of `common.py` would have to be changed.
+I have no way to test on a Mac, and it probably won't work out of the box. Chances are most of `paths.py` would have to be changed.
 
 ## Rewrite for `v1.0`
 ### Why?
