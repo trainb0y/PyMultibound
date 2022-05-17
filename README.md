@@ -1,6 +1,6 @@
 # PyMultibound
 
-### WIP Rewrite. Some old features are still missing! (CLI, Character Appearance Editor)
+### WIP Rewrite. Some old features are still missing! (CLI, Profile Compression)
 
 
 Yet another Multibound-ish thing for Starbound. This lets you create and manage Starbound "profiles" letting you easily control what mods and what universe are active at what time. (Basically different saves)
@@ -39,4 +39,10 @@ A GUI! As of version 1.0 there is a GUI using `PyQt5`, that lets you use all of 
 
 A multitude of annoying bugs have also been fixed.
 
-Note that the character appearance editor has been temporarily removed, to be added at a later date.
+## Character Appearance Editor
+PyMultibound has a feature in which one can make appearance "templates" from pre-existing characters, and apply them to other characters. It works by replacing the `content/identity/` section of the `.player` file with the one from the template. As of now it does not update quest portraits, I may add this later.
+
+Note that this feature is experimental, please make a backup before using it.
+
+## Contributing
+Check out CONTRIBUTING.md
