@@ -1,5 +1,7 @@
 import logging, os, platform, sys, json
 from os.path import join
+from config import *# Just sets up logging
+
 
 # About the two sbinits:
 # When I switched to Linux I noticed the sbinit.config looked different.
@@ -96,7 +98,6 @@ else:
     with open(settings, "r") as f:
         paths = json.load(f)
         logging.info("Loaded settings from file")
-logging.info(f"Paths: {paths}")
 
 if not os.path.exists(paths["profiles"]):
     os.mkdir(paths["profiles"])
@@ -104,3 +105,5 @@ if not os.path.exists(paths["profiles"]):
 if not os.path.exists(paths["templates"]):
     os.mkdir(paths["templates"])
     logging.info("Created templates directory")
+
+logging.info(f"Paths: {paths}")

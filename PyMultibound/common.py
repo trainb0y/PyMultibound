@@ -2,18 +2,6 @@ import copy, shutil
 
 from paths import *
 
-logging.basicConfig(
-    format="%(asctime)s: %(levelname)s - %(module)s - %(funcName)s: %(message)s",
-    level=logging.DEBUG,
-    filename=join(os.path.dirname(os.path.realpath(__file__)), "PyMultibound.log"),
-    filemode="w"
-)
-
-VERSION = "v1.0.1"
-
-logging.info(f"PyMultibound Version: {VERSION}, Platform: {platform.system()}")
-
-
 def safe_move(src, dst):
     """
     Attempt to move a directory or file using shutil.move()
@@ -24,7 +12,7 @@ def safe_move(src, dst):
         shutil.move(src, dst)
         return True
     except Exception as e:
-        logging.error(f"An error occured while trying to move {src} to {dst}: {e}")
+        logging.error(f"An error occurred while trying to move {src} to {dst}: {e}")
         return False
 
 
@@ -32,7 +20,7 @@ def runStarbound(profile: str):
     """
     Run Starbound with the given profile
     """
-    logging.info("Starting starbound...")
+    logging.info("Starting Starbound...")
     cmd = f'"{paths["starboundExecutable"]}" ' \
           f'-bootconfig "{join(paths["profiles"], profile, "sbinit.config")}"'
     logging.info(f"Launch command: {cmd}")
