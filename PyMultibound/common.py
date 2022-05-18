@@ -1,6 +1,4 @@
-import copy
-import json
-import shutil
+import copy, shutil
 
 from paths import *
 
@@ -14,9 +12,6 @@ logging.basicConfig(
 VERSION = "v1.0.1"
 
 logging.info(f"PyMultibound Version: {VERSION}, Platform: {platform.system()}")
-logging.debug("Profile Directory: " + profilesDir)
-logging.debug("Workshop Directory: " + workshopDir)
-logging.debug("Starbound Executable" + starboundExecutable)
 
 
 def safe_move(src, dst):
@@ -38,8 +33,8 @@ def runStarbound(profile: str):
     Run Starbound with the given profile
     """
     logging.info("Starting starbound...")
-    cmd = f'"{starboundExecutable}" ' \
-          f'-bootconfig "{join(profilesDir, profile, "sbinit.config")}"'
+    cmd = f'"{paths["starboundExecutable"]}" ' \
+          f'-bootconfig "{join(paths["profiles"], profile, "sbinit.config")}"'
     logging.info(f"Launch command: {cmd}")
     runCommand(cmd)
     logging.info("Starbound stopped")
@@ -51,39 +46,39 @@ def createProfile(name: str, imp: bool) -> bool:
 
     imp: whether to import subscribed Steam Workshop mods
     """
-    if os.path.exists(join(profilesDir, name)):
+    if os.path.exists(join(paths["profiles"], name)):
         logging.warning(f"Cannot create profile {name} as it already exists!")
         return False
     logging.info(f"Creating profile with name {name}")
     for option in ["mods", "storage"]:
-        directory = join(profilesDir, name, option)
+        directory = join(paths['profiles'], name, option)
         os.makedirs(directory)
         logging.info(f"Created {directory}")
-    with open(join(profilesDir, name, "sbinit.config"), "x") as f:
+    with open(join(paths['profiles'], name, "sbinit.config"), "x") as f:
         sbinit = copy.deepcopy(blankSBInit)
-        sbinit["assetDirectories"].append(join(profilesDir, name, "mods"))
-        sbinit["storageDirectory"] = join(profilesDir, name, "storage")
+        sbinit["assetDirectories"].append(join(paths['profiles'], name, "mods"))
+        sbinit["storageDirectory"] = join(paths['profiles'], name, "storage")
         json.dump(sbinit, f, indent=2)
         logging.info(f"Created sbinit.config for {name}")
 
     if not imp: return True
     # Import steam workshop mods
-    if len(next(os.walk(workshopDir))[1]) > 0:
+    if len(next(os.walk(paths['workshop']))[1]) > 0:
         logging.info(f"Found workshop mods. {name}")
-        for modID in next(os.walk(workshopDir))[1]:
+        for modID in next(os.walk(paths['workshop']))[1]:
             # Basically for numerically id-ed folder
-            if not os.path.isfile(join(workshopDir, modID, "contents.pak")):
+            if not os.path.isfile(join(paths['workshop'], modID, "contents.pak")):
                 logging.warning(f"No contents.pak file was found in workshop mod {modID}")
             else:
                 logging.debug("Attempting to extract profile metadata")
-                unpacked = unpack(os.path.join(workshopDir, modID, "contents.pak"))
+                unpacked = unpack(os.path.join(paths['workshop'], modID, "contents.pak"))
                 modData = loadJson(os.path.join(unpacked, "_metadata"))
                 logging.debug("Got mod metadata")
                 shutil.rmtree(unpacked)
 
                 safe_move(
-                    join(workshopDir, modID, "contents.pak"),
-                    join(profilesDir, name, "mods", f"workshop-{modData['name']}-{modData['version']}.pak")
+                    join(paths['workshop'], modID, "contents.pak"),
+                    join(paths['profiles'], name, "mods", f"workshop-{modData['name']}-{modData['version']}.pak")
                 )
                 logging.info(f"Moved workshop mod {modID} ({modData['name']}) to {name}\"s mod folder")
 
@@ -94,7 +89,7 @@ def deleteProfile(name: str) -> bool:
     """
     logging.info(f"Deleting profile {name}")
     try:
-        shutil.rmtree(join(profilesDir, name))
+        shutil.rmtree(join(paths['profiles'], name))
         logging.info("Deleted")
         return True
     except Exception as e:
@@ -108,7 +103,7 @@ def getProfiles() -> [str]:
     """
     profiles = []
     try:
-        for name in next(os.walk(profilesDir))[1]:
+        for name in next(os.walk(paths['profiles']))[1]:
             logging.debug(f"Found profile {name}")
             profiles.append(name)
     except StopIteration:
@@ -123,7 +118,7 @@ def unpack(path: str) -> str:
     and save it to <path>-unpacked/
     """
     logging.debug(f"Unpacking {path}")
-    runCommand(f'"{unpackAssets}" "{path}" "{path}-unpacked"')
+    runCommand(f'"{paths["unpackAssets"]}" "{path}" "{path}-unpacked"')
     logging.debug("Unpacked")
     return f"{path}-unpacked"
 
@@ -149,7 +144,7 @@ def createTemplate(characterPath: str) -> bool:
     """
     logging.info("Attempting to create a new template")
     character = loadCharacter(characterPath)
-    templatePath = join(templatesDir, f"{character['content']['identity']['name']}.template")
+    templatePath = join(paths['templates'], f"{character['content']['identity']['name']}.template")
     if os.path.exists(templatePath):
         logging.warning("Could not create template as it would overwrite a template of the same name!")
         return False
@@ -164,11 +159,11 @@ def loadCharacter(path: str) -> {}:
     """
     Load json from the given .player file at path
     """
-    if os.path.exists(temporaryPath): os.remove(temporaryPath)
-    runCommand(f'"{dumpJson}" "{path}" "{temporaryPath}"')
-    logging.info(f"Created temporary json file from .player at {temporaryPath}")
-    j = loadJson(temporaryPath)
-    os.remove(temporaryPath)
+    if os.path.exists(paths['temporary']): os.remove(paths['temporary'])
+    runCommand(f'"{paths["dumpJson"]}" "{path}" "{paths["temporary"]}"')
+    logging.info(f"Created temporary json file from .player at {paths['temporary']}")
+    j = loadJson(paths['temporary'])
+    os.remove(paths['temporary'])
     return j
 
 
@@ -176,10 +171,10 @@ def saveCharacter(path: str, data: {}):
     """
     Save the given data to a .player file at path
     """
-    with open(temporaryPath, "w") as f:
+    with open(paths['temporary'], "w") as f:
         json.dump(data, f, indent=4)
         logging.debug(f"Dumped {data} to the temporary path")
-    runCommand(f'"{makeJson}" "{temporaryPath}" "{path}"')
+    runCommand(f'"{paths["makeJson"]}" "{paths["temporary"]}" "{path}"')
     logging.info(f"Saved {data} to a character at {path}")
 
 
@@ -224,8 +219,8 @@ def getTemplates() -> [(str, str)]:
     """
     logging.debug("Attempting to get a list of templates")
     templates = []
-    for template in os.listdir(templatesDir):
-        templates.append((template.replace(".template", ""), join(templatesDir, template)))
+    for template in os.listdir(paths['templates']):
+        templates.append((template.replace(".template", ""), join(paths['templates'], template)))
         logging.debug(f"Found character template {template}")
     return templates
 
@@ -238,11 +233,11 @@ def getCharacters() -> [(str, str, str)]:
     logging.debug("Attempting to get a list of characters")
     characters = []
     try:
-        for name in next(os.walk(profilesDir))[1]:
+        for name in next(os.walk(paths['profiles']))[1]:
             try:
-                for character in os.listdir(join(profilesDir, name, "storage", "player")):
+                for character in os.listdir(join(paths['profiles'], name, "storage", "player")):
                     if character.endswith(".player"):
-                        path = join(profilesDir, name, "storage", "player", character)
+                        path = join(paths['profiles'], name, "storage", "player", character)
                         json = loadCharacter(path)
                         name = json["content"]["identity"]["name"]
                         uuid = json["content"]["uuid"]

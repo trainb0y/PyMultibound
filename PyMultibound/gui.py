@@ -231,7 +231,7 @@ Be sure to save a backup before use!
 
         if confirm.exec_() == QMessageBox.Yes:
             logging.info(f"Deleting template {template}")
-            os.remove(join(templatesDir, template+".template"))
+            os.remove(join(paths["templates"], template+".template"))
             self._updateLists()
 
     def _applyTemplate(self):
@@ -267,7 +267,7 @@ Be sure to save a backup before use!
 
         if confirm.exec_() == QMessageBox.Yes:
             logging.info(f"Applying template {template} to {character}")
-            applyTemplate(join(templatesDir, template + ".template"), character[0], preserveName)
+            applyTemplate(join(paths["templates"], template + ".template"), character[0], preserveName)
             self._updateLists()
         logging.info("Aborted template application")
 
