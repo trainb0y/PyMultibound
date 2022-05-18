@@ -64,5 +64,14 @@ else:
     logging.critical("Unrecognized platform, unable to find steamapps directory")
     sys.exit()
 
-if not os.path.exists(profilesDir): os.mkdir(profilesDir)
-if not os.path.exists(templatesDir): os.mkdir(templatesDir)
+
+if not os.path.exists(starboundDir):
+    logging.critical("Starbound directory not found!")
+if not os.path.exists(workshopDir):
+    logging.critical("Workshop directory not found!")
+if not os.path.exists(profilesDir):
+    os.mkdir(profilesDir)
+    logging.info("Created profiles directory")
+if not os.path.exists(templatesDir):
+    os.mkdir(templatesDir)
+    logging.info("Created templates directory")
