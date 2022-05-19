@@ -7,3 +7,4 @@ PyMultibound uses camelCase rather than Python's preferred snake_case because Py
 
 Also, if possible, please document any functions you add. It doesn't have to be in any official format, as long as it clearly explains what the function does.
 
+Type hinting is also reccomended, as it makes the code much more readable.
