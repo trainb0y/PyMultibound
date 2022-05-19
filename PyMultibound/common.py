@@ -65,7 +65,7 @@ def createProfile(name: str, imp: bool) -> bool:
 
                 safe_move(
                     join(paths['workshop'], modID, "contents.pak"),
-                    join(paths['profiles'], name, "mods", f"workshop-{modData['name']}-{modData['version']}.pak")
+                    join(paths['profiles'], name, "mods", f"workshop-{modData['name']}-{modData['version']}.pak".replace(" ", "_"))
                 )
                 logging.info(f"Moved workshop mod {modID} ({modData['name']}) to {name}\"s mod folder")
 
