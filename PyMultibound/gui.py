@@ -12,7 +12,7 @@ class MainWindow(QMainWindow):
 
         self.profileList = QListWidget()
         self._updateProfileList()
-        self.setCentralWidget(self.profileList) # It's the only thing we need
+        self.setCentralWidget(self.profileList)  # It's the only thing we need
         # no need for any container widgets
 
         # Use a tool bar for buttons
@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
         """
         logging.debug("Creating delete profile dialog")
         name = self._getSelectedProfile()
-        if name == "": # None selected
+        if name == "":  # None selected
             self.status.showMessage("Select a profile before deleting it!")
             return
 
@@ -124,6 +124,7 @@ class CharacterTemplateMenu(QMainWindow):
     The menu in which the user can create,
     delete, or apply character appearance templates.
     """
+
     def __init__(self):
         """
         Window setup and initialization tasks
@@ -192,7 +193,7 @@ Be sure to save a backup before use!
         """
         logging.debug("Attempting to create template")
         character = self._getSelectedCharacter()
-        if character == "": return # No character
+        if character == "": return  # No character
         for template in getTemplates():
             # The character name cannot be the name of an existing template
             # There is probably a better way to handle this,
@@ -219,7 +220,7 @@ Be sure to save a backup before use!
         """
         logging.debug("Creating template delete dialog")
         template = self._getSelectedTemplate()
-        if template == "": return # no selected template
+        if template == "": return  # no selected template
 
         # Confirmation message box
         confirm = QMessageBox()
@@ -231,7 +232,7 @@ Be sure to save a backup before use!
 
         if confirm.exec_() == QMessageBox.Yes:
             logging.info(f"Deleting template {template}")
-            os.remove(join(paths["templates"], template+".template"))
+            os.remove(join(paths["templates"], template + ".template"))
             self._updateLists()
 
     def _applyTemplate(self):
@@ -281,7 +282,7 @@ Be sure to save a backup before use!
             self.templateList.addItem(QListWidgetItem(template[0]))
 
         self.characterList.clear()
-        self.characters = [] # to store UUID and Path, because we need more than just the name
+        self.characters = []  # to store UUID and Path, because we need more than just the name
         for character in getCharacters():
             self.characterList.addItem(QListWidgetItem(f"{character[2]} - {character[1]}"))
             self.characters.append(character)
