@@ -59,10 +59,8 @@ def createProfile(name: str, imp: bool) -> bool:
                 logging.warning(f"No contents.pak file was found in workshop mod {modID}")
             else:
                 logging.debug("Attempting to extract profile metadata")
-                unpacked = unpack(os.path.join(paths['workshop'], modID, "contents.pak"))
-                modData = loadJson(os.path.join(unpacked, "_metadata"))
+                modData = getModMetadata(os.path.join(paths['workshop'], modID, "contents.pak"))
                 logging.debug("Got mod metadata")
-                shutil.rmtree(unpacked)
 
                 safe_move(
                     join(paths['workshop'], modID, "contents.pak"),
@@ -100,13 +98,34 @@ def getProfiles() -> [str]:
     return profiles
 
 
+def getModMetadata(path: str) -> {}:
+    """
+    Get the metadata for the mod at path
+    """
+    unpacked = unpack(path)
+    modData = loadJson(os.path.join(unpacked, "_metadata"))
+    shutil.rmtree(unpacked)
+    return modData
+
+
 def unpack(path: str) -> str:
     """
     Unpack the .pak file at the given path,
-    and save it to <path>-unpacked/
+    and return where it was unpacked to.
     """
+    logging.debug(f"Attempting to unpack mod at {path}")
+    if not path.endswith(".pak"):
+        logging.warning(f"Cannot unpack a non .pak file ({path})")
+        if os.path.isdir(path):
+            logging.warning("It is a directory, assuming it is already unpacked...")
+            return path
+        else: raise FileNotFoundError("Invalid mod file")
+    unpackedPath = f"{path}-unpacked"
+    if os.path.exists(unpackedPath):
+        logging.warning(f"Cannot unpack {path} as it is already unpacked")
+        return unpackedPath
     logging.debug(f"Unpacking {path}")
-    runCommand(f'"{paths["unpackAssets"]}" "{path}" "{path}-unpacked"')
+    runCommand(f'"{paths["unpackAssets"]}" "{path}" {unpackedPath}')
     logging.debug("Unpacked")
     return f"{path}-unpacked"
 
@@ -241,3 +260,12 @@ def getCharacters() -> [(str, str, str)]:
         logging.info("No existing characters found!")
 
     return characters
+
+def getModList(profileName: str) -> [{}]:
+    """
+    Return a list of the given profile's mods' metadata
+
+    Warning: as this has to extract the metadata from the .pak files,
+    it may take a while.
+    """
+
