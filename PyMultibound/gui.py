@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
         tools.addAction("Run Starbound", self.attemptRunStarbound)
         tools.addAction("New Profile", self._newProfileDialog)
         tools.addAction("Delete Profile", self._deleteProfileDialog)
+        tools.addAction("Mods", self._openModsMenu)
         tools.addAction("Character Templates", self._openTemplateMenu)
 
         # Status bar for current status/messages
@@ -117,6 +118,35 @@ class MainWindow(QMainWindow):
         # Not a child of this; appears as its own window
         self.templateMenu = CharacterTemplateMenu()
         self.templateMenu.show()
+
+    def _openModsMenu(self):
+        """
+        Open the profile mod menu
+        """
+        profile = self._getSelectedProfile()
+        if profile == "": return
+        logging.debug("Opening mods menu")
+        self.modsMenu = ProfileModMenu(profile)
+
+
+
+class ProfileModMenu(QMainWindow):
+    def __init__(self, profile: str):
+        logging.debug("Initializing profile mod menu")
+        self.profile = profile
+        super().__init__()
+        self.setWindowTitle("PyMultibound - Mods")
+        self.modList = QListWidget(self)
+        self.setCentralWidget(self.modList)
+
+        self._updateMods()
+
+    def _updateMods(self):
+        self.modList.clear()
+        for mod in getModList(self.profile):
+            self.modList.addItem(QListWidgetItem(mod))
+
+
 
 
 class CharacterTemplateMenu(QMainWindow):

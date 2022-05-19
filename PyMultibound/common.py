@@ -274,8 +274,9 @@ def getModList(profileName: str) -> [{}]:
     logging.debug(f"Attempting to get mod metadata for profile z{profileName}")
     modList = []
     try:
-        for mod in os.listdir(join(paths['profiles'], profileName, "mods")):
-            modList.append(getModMetadata(mod))
+        modsDir = join(paths['profiles'], profileName, "mods")
+        for mod in os.listdir(modsDir):
+            modList.append(getModMetadata(join(modsDir, mod)))
     except FileNotFoundError:
         logging.warning(f"Mod folder not found for {profileName}")
         logging.warning("This is likely because it does not yet contain any mods")
