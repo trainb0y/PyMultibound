@@ -127,9 +127,9 @@ def unpack(path: str) -> str:
         logging.warning(f"Cannot unpack {path} as it is already unpacked")
         return unpackedPath
     logging.debug(f"Unpacking {path}")
-    runCommand(f'"{paths["unpackAssets"]}" "{path}" {unpackedPath}')
+    runCommand(f'"{paths["unpackAssets"]}" "{path}" "{unpackedPath}"')
     logging.debug("Unpacked")
-    return f"{path}-unpacked"
+    return unpackedPath
 
 
 def loadJson(path: str) -> {}:
@@ -138,6 +138,9 @@ def loadJson(path: str) -> {}:
     Automatically replaces some invalid json
     (FU's "inf" with a large integer, etc.)
     """
+    if not os.path.exists(path):
+        logging.error(f"Cannot read JSON from {path} as it does not exist!")
+        return {}
     logging.debug(f"Loading json from {path}")
     with open(path, "r") as f:
         raw = f.read()
