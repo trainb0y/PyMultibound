@@ -2,6 +2,7 @@ import copy, shutil
 
 from paths import *
 
+
 def safe_move(src, dst):
     """
     Attempt to move a directory or file using shutil.move()
@@ -119,7 +120,8 @@ def unpack(path: str) -> str:
         if os.path.isdir(path):
             logging.warning("It is a directory, assuming it is already unpacked...")
             return path
-        else: raise FileNotFoundError("Invalid mod file")
+        else:
+            raise FileNotFoundError("Invalid mod file")
     unpackedPath = f"{path}-unpacked"
     if os.path.exists(unpackedPath):
         logging.warning(f"Cannot unpack {path} as it is already unpacked")
@@ -261,6 +263,7 @@ def getCharacters() -> [(str, str, str)]:
 
     return characters
 
+
 def getModList(profileName: str) -> [{}]:
     """
     Return a list of the given profile's mods' metadata
@@ -268,4 +271,14 @@ def getModList(profileName: str) -> [{}]:
     Warning: as this has to extract the metadata from the .pak files,
     it may take a while.
     """
+    logging.debug(f"Attempting to get mod metadata for profile z{profileName}")
+    modList = []
+    try:
+        for mod in os.listdir(join(paths['profiles'], profileName, "mods")):
+            modList.append(getModMetadata(mod))
+    except FileNotFoundError:
+        logging.warning(f"Mod folder not found for {profileName}")
+        logging.warning("This is likely because it does not yet contain any mods")
+        return []
 
+    return modList
