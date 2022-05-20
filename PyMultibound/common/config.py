@@ -5,7 +5,7 @@ import logging, os, platform
 logging.basicConfig(
     format="%(asctime)s: %(levelname)s - %(module)s - %(funcName)s: %(message)s",
     level=logging.DEBUG,
-    filename=os.path.join(os.path.dirname(os.path.realpath(__file__)), "PyMultibound.log"),
+    filename=os.path.join(os.path.dirname(os.path.realpath(__file__)), "../PyMultibound.log"),
     filemode="w"
 )
 

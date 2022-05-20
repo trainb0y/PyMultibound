@@ -50,7 +50,7 @@ def getDefaultPaths():
     if platform.system() == "Windows":
         steamappsDir = os.path.join(*["c:\\", "Program Files (x86)", "Steam", "steamapps"])
 
-        starboundDir = join(steamappsDir, "common", "Starbound")  # Main Starbound directory inside of steamapps
+        starboundDir = join(steamappsDir, "", "Starbound")  # Main Starbound directory inside of steamapps
         workshopDir = join(steamappsDir, "workshop", "content", "211820")  # Directory for starbound's workshop mods
         dumpJson = join(starboundDir, "win32", "dump_versioned_json.exe")  # path to the dump_versioned_json.exe
         makeJson = join(starboundDir, "win32", "make_versioned_json.exe")  # path to the make_versioned_json.exe
@@ -60,7 +60,7 @@ def getDefaultPaths():
     elif platform.system() == "Linux":
         steamappsDir = os.path.join(os.path.expanduser("~/.local/share/Steam/steamapps"))
 
-        starboundDir = join(steamappsDir, "common", "Starbound")  # Main Starbound directory inside of steamapps
+        starboundDir = join(steamappsDir, "", "Starbound")  # Main Starbound directory inside of steamapps
         workshopDir = join(steamappsDir, "workshop", "content", "211820")  # Directory for starbound's workshop mods
         starboundExecutable = join(starboundDir, "linux", "run-client.sh")
         dumpJson = join(starboundDir, "linux", "dump_versioned_json")  # path to the dump_versioned_json.exe
