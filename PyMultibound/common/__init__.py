@@ -1,4 +1,6 @@
-import logging, os, platform
+import logging
+import os
+import platform
 
 logging.basicConfig(
     format="%(asctime)s: %(levelname)s - %(module)s - %(funcName)s: %(message)s",

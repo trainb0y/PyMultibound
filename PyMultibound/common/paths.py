@@ -43,6 +43,7 @@ else:
 
 scriptDir = join(os.path.dirname(os.path.realpath(__file__)), os.pardir, os.pardir)
 
+
 def getDefaultPaths():
     # In a function so we don't expose these variables to the global scope,
     # as these are defaults and can be overwritten by the user
