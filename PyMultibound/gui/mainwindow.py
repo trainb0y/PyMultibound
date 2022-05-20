@@ -1,3 +1,5 @@
+import sys
+
 from PyQt5.QtWidgets import *
 
 from PyMultibound.common import *
@@ -121,3 +123,11 @@ class MainWindow(QMainWindow):
         # Not a child of this; appears as its own window
         self.templateMenu = CharacterTemplateMenu()
         self.templateMenu.show()
+
+
+if __name__ == '__main__':
+    logging.info("Running GUI")
+    app = QApplication(sys.argv)
+    win = MainWindow()
+    win.show()
+    sys.exit(app.exec_())
