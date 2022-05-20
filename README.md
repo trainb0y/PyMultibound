@@ -31,15 +31,6 @@ Although I can only test this on Linux, I've tried to make it support Windows to
 
 I have no way to test on a Mac, and it probably won't work out of the box. Chances are most of `paths.py` would have to be changed.
 
-## Rewrite for `v1.0`
-### Why?
-The original PyMultibound (`v0.1`-`v0.3`) was centered on the idea of actually moving each profile's data into Starbound's folder, and was only sloppily changed when I realized all that was nececary was redirecting to a new `sbinit.config`. As such, it was overcomplicated and hard to maintain.
-
-### What's New?
-A GUI! As of version 1.0 there is a GUI using `PyQt5`, that lets you use all of the primary features of PyMultibound. Note that this is my first PyQt5 project, and as such might have some issues.
-
-A multitude of annoying bugs have also been fixed.
-
 ## Character Appearance Editor
 PyMultibound has a feature in which one can make appearance "templates" from pre-existing characters, and apply them to other characters. It works by replacing the `content/identity/` section of the `.player` file with the one from the template. As of now it does not update quest portraits, I may add this later.
 
