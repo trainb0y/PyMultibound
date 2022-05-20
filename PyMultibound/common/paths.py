@@ -1,7 +1,9 @@
-import logging, os, platform, sys, json
+import json
+import logging
+import os
+import platform
+import sys
 from os.path import join
-from config import *# Just sets up logging
-
 
 # About the two sbinits:
 # When I switched to Linux I noticed the sbinit.config looked different.
@@ -31,21 +33,23 @@ blankLinuxSBInit = {
 
     "storageDirectory": "../storage/"
 }
-if platform.system() == "Windows": blankSBInit = blankWindowsSBInit
-elif platform.system() == "Linux": blankSBInit = blankLinuxSBInit
+if platform.system() == "Windows":
+    blankSBInit = blankWindowsSBInit
+elif platform.system() == "Linux":
+    blankSBInit = blankLinuxSBInit
 else:
     logging.critical("Not running on windows or linux! Cannot run!")
     sys.exit()
 
+scriptDir = join(os.path.dirname(os.path.realpath(__file__)), os.pardir, os.pardir)
 
 def getDefaultPaths():
     # In a function so we don't expose these variables to the global scope,
     # as these are defaults and can be overwritten by the user
 
-    profilesDir = join(os.path.dirname(os.path.realpath(__file__)), os.pardir,
-                       "profiles")  # Directory in which the profiles reside
-    templatesDir = join(os.path.dirname(os.path.realpath(__file__)), os.pardir, "templates")
-    temporaryPath = join(os.path.dirname(os.path.realpath(__file__)), os.pardir, "temp")
+    profilesDir = join(scriptDir, "profiles")  # Directory in which the profiles reside
+    templatesDir = join(scriptDir, "templates")
+    temporaryPath = join(scriptDir, "temp")
 
     if platform.system() == "Windows":
         steamappsDir = os.path.join(*["c:\\", "Program Files (x86)", "Steam", "steamapps"])
@@ -91,7 +95,7 @@ def savePaths(paths: {}):
 
 paths = getDefaultPaths()
 
-settings = join(os.path.dirname(os.path.realpath(__file__)), os.pardir, "settings.json")
+settings = join(scriptDir, "settings.json")
 if not os.path.exists(settings):
     savePaths(paths)
 else:
