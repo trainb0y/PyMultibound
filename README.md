@@ -11,10 +11,11 @@ Although it is stable enough that I use it, it is a work in progress and probabl
 Note that for now it requires Starbound to be installed through Steam to correctly function. This will hopefully change in the future.
 
 ## How to Use
-Run `PyMultibound/gui.py`
+Run `PyMultibound/gui/mainwindow.py`
 Requires a recent Python(3) version and PyQt5 (Tested on 3.9 and 3.10)  
-Packaged executables and/or an install script coming soon:tm:  
-Note: Currently `cli.py` does nothing, will eventually have a command-line interface
+Packaged executables and/or an install script coming soon:tm:
+
+Note: Currently `PyMultibound/cli/*` does nothing, will eventually have a command-line interface
 
 ## Steam Workshop support
 
