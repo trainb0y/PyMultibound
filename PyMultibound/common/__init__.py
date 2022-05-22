@@ -9,5 +9,5 @@ logging.basicConfig(
     filemode="w"
 )
 
-VERSION = "v1.1.0"
+VERSION = "v1.1.1"
 logging.info(f"PyMultibound Version: {VERSION}, Platform: {platform.system()}")
