@@ -71,11 +71,11 @@ def getCharacters() -> [(str, str, str)]:
     logging.debug("Attempting to get a list of characters")
     characters = []
     try:
-        for name in next(os.walk(paths['profiles']))[1]:
+        for profileName in next(os.walk(paths['profiles']))[1]:
             try:
-                for character in os.listdir(join(paths['profiles'], name, "storage", "player")):
+                for character in os.listdir(join(paths['profiles'], profileName, "storage", "player")):
                     if character.endswith(".player"):
-                        path = join(paths['profiles'], name, "storage", "player", character)
+                        path = join(paths['profiles'], profileName, "storage", "player", character)
                         json = loadCharacter(path)
                         name = json["content"]["identity"]["name"]
                         uuid = json["content"]["uuid"]
@@ -83,7 +83,7 @@ def getCharacters() -> [(str, str, str)]:
                         logging.debug(f"Found character {name} ({uuid}) at {path}")
             except FileNotFoundError:
                 # if the profile exists but contains no players
-                logging.warning(f"Player folder not found for {name}")
+                logging.warning(f"Player folder not found for {profileName}")
                 logging.warning("This is likely because it does not yet contain any players")
                 continue
 
